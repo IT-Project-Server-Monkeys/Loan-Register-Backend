@@ -10,8 +10,9 @@ let MongoClient = require('mongodb').MongoClient;
 const uri = "mongodb+srv://phoebe_bear:GoldenDragon1@comp30022-project.yybkyjm.mongodb.net/?retryWrites=true&w=majority"
 
 app.get("/", (req, res) => {
-    res.write("Hello, testing");
-    res.send("IT Project Server Monkey Backend Initialisation")
+    
+    //res.send("IT Project Server Monkey Backend Initialisation")
+    res.send("hello,testing");
 });
 
 app.get("/users", (req, res) => {
