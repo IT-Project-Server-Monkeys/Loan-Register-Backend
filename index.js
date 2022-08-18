@@ -11,6 +11,7 @@ const uri = "mongodb+srv://phoebe_bear:GoldenDragon1@comp30022-project.yybkyjm.m
 
 app.get("/", (req, res) => {
     res.send("IT Project Server Monkey Backend Initialisation")
+    res.send("Test deploying by Huy")
 });
 
 app.get("/users", (req, res) => {
@@ -19,7 +20,7 @@ app.get("/users", (req, res) => {
         var dbo = db.db("ProjectDatabase");
         dbo.collection("users").find({}).toArray(function(err, result) {
           if (err) throw err;
-          res.send(result);
+          res.send(JSON.stringify(result));
           db.close();
         });
     });
@@ -33,7 +34,7 @@ app.get("/users/:id", (req, res) => {
         dbo.collection("users").find({_id: user_id}).toArray(function(err, result) {
             if (err) throw err;
             console.log(result)
-            res.send(result);
+            res.send(JSON.stringify(result));
             db.close();
         });
     });
@@ -42,4 +43,3 @@ app.get("/users/:id", (req, res) => {
 app.listen(PORT, function() {
     console.log(`Listening on Port ${PORT}`);
 });
-  
