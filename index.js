@@ -1,4 +1,4 @@
-const PORT = process.env.PORT;// || 3000;
+const PORT = process.env.PORT || 3000;
 
 let express = require("express");
 const { ObjectId } = require("mongodb");
@@ -32,6 +32,7 @@ app.get("/users/:id", (req, res) => {
         var dbo = db.db("ProjectDatabase");
         dbo.collection("users").find({_id: user_id}).toArray(function(err, result) {
             if (err) throw err;
+            console.log(result)
             res.send(result);
             db.close();
         });
