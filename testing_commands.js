@@ -51,22 +51,12 @@ async function main() {
   console.log(users)
 }
 
-async function create_item() {
+async function create_items(item) {
   var result
   try {
     const database = client.db("ProjectDatabase");
     const items = database.collection("items");
-
-    const doc = {
-      item_name: "Harry Potter",
-      category: "Book",
-      description: "The Philosopher's Stone.",
-      item_owner: ObjectId("62fd8a9df04410afbc6df31d"),
-      being_loaned: false,
-      loan_frequency: 0
-    }
-
-    result = await items.insertOne(doc);
+    result = await items.insertOne(item);
     console.log(`A document was inserted with the _id: ${result.insertedId}`);
   } finally {
     await client.close();
@@ -74,7 +64,78 @@ async function create_item() {
   return result._id
 }
 
-  
+async function create_loan(loan) {
+  var result
+  try {
+    const database = client.db("ProjectDatabase");
+    const loans = database.collection("loans");
+    result = await loans.insertOne(loan);
+    console.log(`A document was inserted with the _id: ${result.insertedId}`);
+  } finally {
+    await client.close();
+  }
+  return result._id
+}
 
+
+async function update_item(item_id) {
+  const database = client.db("ProjectDatabase");
+  const items = database.collection("items");
+
+  const filter = {_id: new ObjectId(item_id)}
+  const updateDocument = {
+    $set: {
+      being_loaned: true
+    },
+    $inc: {
+      loan_frequency: 1
+    }
+  }
+  const result = await items.updateOne(filter, updateDocument);
+  console.log(result)
+
+}
+
+
+
+const book = {
+  item_name: "Harry Potter",
+  category: "Books",
+  description: "The Philosopher's Stone.",
+  item_owner: new ObjectId("62fd8a9df04410afbc6df31d"),
+  being_loaned: false,
+  loan_frequency: 0
+}
+
+const laptop = {
+  item_name: "Macbook Pro",
+  category: "Electronics",
+  description: "Newest Macbook released by Apple",
+  item_owner: new ObjectId("62fd8a9df04410afbc6df31e"),
+  being_loaned: false,
+  loan_frequency: 0
+}
+
+const sunscreen = {
+  item_name: "Shiseido Sunscreen",
+  category: "Toiletries and Beauty",
+  description: "Very nice SPF 50+ sunscreen",
+  item_owner: new ObjectId("62fd8a9df04410afbc6df31d"),
+  being_loaned: false,
+  loan_frequency: 0
+}
+
+
+const loan_sunscreen = {
+  loaner_id: new ObjectId("62fd8a9df04410afbc6df31d"),
+  loanee_id: new ObjectId("62fd8a9df04410afbc6df31e"),
+  item_id: new ObjectId("62fd8d5bfd46ebc631b3bc79"),
+  status: "Current",
+  loan_start_date: new Date("2022-08-18"),
+  intended_return_date: new Date("2022-08-25"),
+  actual_return_date: new Date()
+}
 //create_users()
-create_item()
+//create_items(sunscreen)
+//create_loan(loan_sunscreen)
+//update_item("62fd8d5bfd46ebc631b3bc79")
