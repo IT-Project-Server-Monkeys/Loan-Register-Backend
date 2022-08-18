@@ -10,6 +10,7 @@ let MongoClient = require('mongodb').MongoClient;
 const uri = "mongodb+srv://phoebe_bear:GoldenDragon1@comp30022-project.yybkyjm.mongodb.net/?retryWrites=true&w=majority"
 
 app.get("/", (req, res) => {
+    res.write("Hello, testing");
     res.send("IT Project Server Monkey Backend Initialisation")
 });
 
@@ -42,4 +43,3 @@ app.get("/users/:id", (req, res) => {
 app.listen(PORT, function() {
     console.log(`Listening on Port ${PORT}`);
 });
-  
