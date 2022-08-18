@@ -19,7 +19,7 @@ app.get("/users", (req, res) => {
         var dbo = db.db("ProjectDatabase");
         dbo.collection("users").find({}).toArray(function(err, result) {
           if (err) throw err;
-          res.send(result);
+          res.send(JSON.stringify(result));
           db.close();
         });
     });
@@ -33,7 +33,7 @@ app.get("/users/:id", (req, res) => {
         dbo.collection("users").find({_id: user_id}).toArray(function(err, result) {
             if (err) throw err;
             console.log(result)
-            res.send(result);
+            res.send(JSON.stringify(result));
             db.close();
         });
     });
