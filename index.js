@@ -13,61 +13,32 @@ app.get("/", (req, res) => {
     res.send("IT Project Server Monkey Backend Initialisation")
 });
 
-app.get("/users", function(req, res) {
-    users = get_users()
-    res.send(users); //respond with the array of courses
+app.get("/users", (req, res) => {
+    MongoClient.connect(uri, function(err, db) {
+        if (err) throw err;
+        var dbo = db.db("ProjectDatabase");
+        dbo.collection("users").find({}).toArray(function(err, result) {
+          if (err) throw err;
+          res.send(result);
+          db.close();
+        });
+    });
 });
 
-app.get("/users/:id", function(req, res) {
-    const user_id = (req.params.id);
-    const user = get_individual_user(user_id)
-    //if the course does not exist return status 404 (not found)
-    if (!user)
-        return res
-            .status(404)
-            .send("The user with the given id was not found");
-    //return the object
-    res.send(user);
+app.get("/users/:id", (req, res) => {
+    user_id = new ObjectId((req.params.id).toString())
+    MongoClient.connect(uri, function(err, db) {
+        if (err) throw err;
+        var dbo = db.db("ProjectDatabase");
+        dbo.collection("users").find({_id: user_id}).toArray(function(err, result) {
+            if (err) throw err;
+            res.send(result);
+            db.close();
+        });
+    });
 });
 
 app.listen(PORT, function() {
     console.log(`Listening on Port ${PORT}`);
 });
   
-async function get_users() {
-    var allValues;
-    try {
-      const database = client.db("ProjectDatabase");
-      const users = database.collection("users");
-  
-      const cursor = users.find();
-  
-      // print a message if no documents were found
-      if ((await cursor.countDocuments) == 0) {
-        console.log("No documents found!");
-      }
-      // replace console.dir with your callback to access individual elements
-      allValues = await cursor.toArray();
-    } finally {
-      await client.close();
-    }
-    return allValues
-  
-  }
-
-async function get_individual_user(user_id) {
-    var user;
-    try {
-        const database = client.db("ProjectDatabase");
-        const users = database.collection("users");
-    // Query for a movie that has the title 'The Room'
-        const query = { id: new ObjectId(user_id)};
-        const options = {
-        };
-        const user = await users.findOne(query, options);
-        // since this method returns the matched document, not a cursor, print it directly
-    } finally {
-        await client.close();
-    }
-    return user;
-}
