@@ -4,24 +4,24 @@ let express = require("express");
 const { ObjectId } = require("mongodb");
 let app = express();
 app.use(express.json());
-
-let MongoClient = require('mongodb').MongoClient;
-
+const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = "mongodb+srv://phoebe_bear:GoldenDragon1@comp30022-project.yybkyjm.mongodb.net/?retryWrites=true&w=majority"
 
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+
+
 app.get("/", (req, res) => {
-    res.send("IT Project Server Monkey Backend Initialisation")
+    res.send("hello,testing");
 });
 
 app.get("/users", (req, res) => {
-    MongoClient.connect(uri, function(err, db) {
-        if (err) throw err;
-        var dbo = db.db("ProjectDatabase");
-        dbo.collection("users").find({}).toArray(function(err, result) {
-          if (err) throw err;
-          res.send(JSON.stringify(result));
-          db.close();
+    client.connect(err => {
+        const collection = client.db("ProjectDatabase").collection("users");
+        collection.find({}).toArray(function(err, result) {
+            if (err) throw err;
+            res.send(JSON.stringify(result));
         });
+        // perform actions on the collection object
     });
 });
 
@@ -31,32 +31,28 @@ app.get("/tester", (req, res) => {
 });
 
 app.get("/items", (req, res) => {
-    MongoClient.connect(uri, function(err, db) {
-        if (err) throw err;
-        var dbo = db.db("ProjectDatabase");
-        dbo.collection("items").find({}).toArray(function(err, result) {
-          if (err) throw err;
-          res.send(JSON.stringify(result));
-          db.close();
+    client.connect(err => {
+        const collection = client.db("ProjectDatabase").collection("items");
+        collection.find({}).toArray(function(err, result) {
+            if (err) throw err;
+            res.send(JSON.stringify(result));
         });
+        // perform actions on the collection object
     });
 });
 
 app.get("/users/:id", (req, res) => {
     user_id = new ObjectId((req.params.id).toString())
-    MongoClient.connect(uri, function(err, db) {
-        if (err) throw err;
-        var dbo = db.db("ProjectDatabase");
-        dbo.collection("users").find({_id: user_id}).toArray(function(err, result) {
+    client.connect(err => {
+        const collection = client.db("ProjectDatabase").collection("users");
+        collection.find({_id: user_id}).toArray(function(err, result) {
             if (err) throw err;
-            console.log(result)
             res.send(JSON.stringify(result));
-            db.close();
         });
+        // perform actions on the collection object
     });
 });
 
 app.listen(PORT, function() {
     console.log(`Listening on Port ${PORT}`);
 });
-  
