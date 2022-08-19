@@ -40,36 +40,44 @@ app.get("/users", (req, res) => {
     });
 });*/
 
+recordRoutes.route("/items").get(async function (req, res) {
+    const collection = client.db("ProjectDatabase").collection("items");
+    collection.find({}).limit(50).toArray(function (err, result) {
+        if (err) {
+          res.status(400).send("Error fetching listings!");
+          console.log(err)
+        } else {
+          res.json(result);
+        }
+      });
+  });
 
-app.get("/tester", (req, res) => {
-    res.send("Testing Get command")
-});
 
-app.get("/items", (req, res) => {
-    client.connect(err => {
-        const collection = client.db("ProjectDatabase").collection("items");
-        collection.find({}).toArray(function(err, result) {
-            if (err) {
-                res.status(400).send("Error fetching listings!");
-            } 
-            else{
-                res.json(result);
-            }
-        });
-        // perform actions on the collection object
-    });
-});
-
-app.get("/users/:id", (req, res) => {
+recordRoutes.route("/users/:id").get(async function (req, res) {
     user_id = new ObjectId((req.params.id).toString())
-    client.connect(err => {
-        const collection = client.db("ProjectDatabase").collection("users");
-        collection.find({_id: user_id}).toArray(function(err, result) {
-            if (err) throw err;
-            res.send(JSON.stringify(result));
-        });
-        // perform actions on the collection object
+    const collection = client.db("ProjectDatabase").collection("users");
+    collection.find({_id: user_id}).limit(50).toArray(function (err, result) {
+        if (err) {
+          res.status(400).send("Error fetching listings!");
+          console.log(err)
+        } else {
+          res.json(result);
+        }
     });
+});
+
+
+
+recordRoutes.route("/loans").get(async function (req, res) {
+    const collection = client.db("ProjectDatabase").collection("loans");
+    collection.find({}).limit(50).toArray(function (err, result) {
+        if (err) {
+            res.status(400).send("Error fetching listings!");
+            console.log(err)
+        } else {
+            res.json(result);
+        }
+        });
 });
 
 app.listen(PORT, function() {
