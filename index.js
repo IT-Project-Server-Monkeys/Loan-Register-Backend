@@ -25,6 +25,23 @@ app.get("/users", (req, res) => {
     });
 });
 
+
+app.get("/tester", (req, res) => {
+    res.send("Testing Get command")
+});
+
+app.get("/items", (req, res) => {
+    MongoClient.connect(uri, function(err, db) {
+        if (err) throw err;
+        var dbo = db.db("ProjectDatabase");
+        dbo.collection("items").find({}).toArray(function(err, result) {
+          if (err) throw err;
+          res.send(JSON.stringify(result));
+          db.close();
+        });
+    });
+});
+
 app.get("/users/:id", (req, res) => {
     user_id = new ObjectId((req.params.id).toString())
     MongoClient.connect(uri, function(err, db) {
