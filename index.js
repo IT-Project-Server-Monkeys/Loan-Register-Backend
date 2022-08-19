@@ -21,7 +21,8 @@ recordRoutes.route("/users").get(async function (req, res) {
     collection.find({}).limit(50).toArray(function (err, result) {
         if (err) {
           res.status(400).send("Error fetching listings!");
-       } else {
+          console.log(err)
+        } else {
           res.json(result);
         }
       });
