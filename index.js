@@ -48,8 +48,12 @@ app.get("/items", (req, res) => {
     client.connect(err => {
         const collection = client.db("ProjectDatabase").collection("items");
         collection.find({}).toArray(function(err, result) {
-            if (err) throw err;
-            res.send(JSON.stringify(result));
+            if (err) {
+                res.status(400).json(err)
+            } 
+            else{
+                res.json(result);
+            }
         });
         // perform actions on the collection object
     });
