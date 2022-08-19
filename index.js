@@ -9,6 +9,7 @@ const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = "mongodb+srv://phoebe_bear:GoldenDragon1@comp30022-project.yybkyjm.mongodb.net/?retryWrites=true&w=majority"
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+client.connect();
 
 app.use('/', recordRoutes);
 
@@ -49,7 +50,7 @@ app.get("/items", (req, res) => {
         const collection = client.db("ProjectDatabase").collection("items");
         collection.find({}).toArray(function(err, result) {
             if (err) {
-                res.status(400).json(err)
+                res.status(400).send("Error fetching listings!");
             } 
             else{
                 res.json(result);
