@@ -110,4 +110,12 @@ app.listen(PORT, function() {
 
 
 const userRouter = require ("./src/routes/userRouter")
-app.use('/testing', userRouter)
+app.use('/testingUser', userRouter)
+
+
+const loanRouter = require("./src/routes/loanRouter")
+app.use('/testingLoan', loanRouter)
+
+
+const itemRouter = require("./src/routes/itemRouter")
+app.use('/testingItem', itemRouter)

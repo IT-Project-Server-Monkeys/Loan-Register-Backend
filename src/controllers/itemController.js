@@ -11,3 +11,18 @@ const uri = "mongodb+srv://phoebe_bear:GoldenDragon1@comp30022-project.yybkyjm.m
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 client.connect();
 const collection = client.db("ProjectDatabase").collection("items");
+
+
+async function getAllItem(req,res){
+  collection.find({}).limit(50).toArray(function (err, result) {
+      if (err) {
+        res.status(400).send("Error fetching listings!");
+        console.log(err)
+      } else {
+        res.json(result);
+      }
+  });
+}
+module.exports = {
+  getAllItem
+}

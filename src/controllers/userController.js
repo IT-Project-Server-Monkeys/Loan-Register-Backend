@@ -26,6 +26,27 @@ async function getAllUser(req,res){
 
 }
 
+async function check_unique_name(name) {
+
+  const cursor = collection.find({display_name: name});
+  return (cursor.countDocuments==0)
+}
+
+async function getSpecificUser(req,res){
+  user_id = new ObjectId((req.params.id).toString())
+  const collection = client.db("ProjectDatabase").collection("users");
+  collection.find({_id: user_id}).limit(50).toArray(function (err, result) {
+      if (err) {
+        res.status(400).send("Error fetching listings!");
+        console.log(err);
+      } else {
+        res.json(result);
+      }
+  });
+}
+
 module.exports = {
-  getAllUser
+  getAllUser,
+  check_unique_name,
+  getSpecificUser
 }
