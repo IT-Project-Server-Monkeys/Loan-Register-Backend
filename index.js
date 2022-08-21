@@ -73,7 +73,7 @@ recordRoutes.route("/users/add").post(function (req, res) {
     collection.find({display_name: req.body.display_name}).toArray(function (err, result) {
       if (err) {
           return res.status(400).send("Error fetching listings!");
-      } 
+      }
       else {
         if (result.length > 0) {
           console.log("line 79")
@@ -88,14 +88,14 @@ recordRoutes.route("/users/add").post(function (req, res) {
           collection.insertOne(myobj, function (err, result) {
             if (err) {
               console.log(err);
-            }  
+            }
             return res.json(result);
-          });      
+          });
         }
       }
     });
 });
-   
+
 // add in function to check for unique usernames
 
 async function check_unique_name(name) {
@@ -107,3 +107,7 @@ async function check_unique_name(name) {
 app.listen(PORT, function() {
     console.log(`Listening on Port ${PORT}`);
 });
+
+
+const userRouter = require ("./src/routes/userRouter")
+app.use('/testing', userRouter)

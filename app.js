@@ -5,7 +5,7 @@ let MongoClient = require('mongodb').MongoClient;
 
 const uri = "mongodb+srv://phoebe_bear:GoldenDragon1@comp30022-project.yybkyjm.mongodb.net/?retryWrites=true&w=majority"
 
-app.listen(3000, () => console.log("Server running on port 3000!"))
+app.listen(process.end.PORT||3000, () => console.log("Server running on port 3000!"))
 
 app.get("/:name", (req, res) => {
     res.send("Your name is " + req.params.name + "\n");
@@ -22,7 +22,7 @@ app.post('/', (req, res) => {
             display_name: req.body.display_name,
             login_email: req.body.login_email,
             hashed_password: req.body.hashed_password
-        }, 
+        },
         function(err, result) {
             if (err) throw err;
             res.json(result);
