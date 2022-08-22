@@ -16,7 +16,7 @@ app.use('/', recordRoutes);
 app.get("/", (req, res) => {
     res.send("Server Monkeys Backend Testing");
 });
-
+require('./src/models')
 recordRoutes.route("/users").get(async function (req, res) {
     const collection = client.db("ProjectDatabase").collection("users");
     collection.find({}).limit(50).toArray(function (err, result) {
