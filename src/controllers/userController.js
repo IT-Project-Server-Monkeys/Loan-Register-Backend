@@ -11,42 +11,35 @@ const uri = "mongodb+srv://phoebe_bear:GoldenDragon1@comp30022-project.yybkyjm.m
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 client.connect();
 const collection = client.db("ProjectDatabase").collection("users");
-
-async function getAllUser(req,res){
-  collection.find({}).limit(50).toArray(function (err, result) {
-      if (err) {
-        res.status(400).send("Error fetching listings!");
-        console.log(err);
-      } else {
-        res.json(result);
-        return;
-      }
-  });
-
-
+const user = require("../models/userModel");
+const  getAllUser = async (req,res,next) => {
+  try{
+      const result = await user.find().lean()
+      return res.json(result)
+  } catch (err){
+    return next(err)
+  }
+     
 }
 
-async function check_unique_name(name) {
 
-  const cursor = collection.find({display_name: name});
-  return (cursor.countDocuments==0)
+
+const  getSpecificUser = async(req,res,next) => {
+  try{
+  user_id = new ObjectId(req.params.id)
+  const result = await user.findById(user_id).lean()
+  if (!result) {
+    return res.status(404)
+  }
+  return res.json(result)
+  } catch (err){
+    return next(err)
+  }
 }
 
-async function getSpecificUser(req,res){
-  user_id = new ObjectId((req.params.id).toString())
-  const collection = client.db("ProjectDatabase").collection("users");
-  collection.find({_id: user_id}).limit(50).toArray(function (err, result) {
-      if (err) {
-        res.status(400).send("Error fetching listings!");
-        console.log(err);
-      } else {
-        res.json(result);
-      }
-  });
-}
+
 
 module.exports = {
   getAllUser,
-  check_unique_name,
   getSpecificUser
 }
