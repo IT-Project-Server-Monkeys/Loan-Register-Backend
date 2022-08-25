@@ -1,4 +1,4 @@
-const PORT = 3000;
+const PORT = 3000//process.env.PORT || 3000;
 
 let express = require("express");
 const recordRoutes = express.Router();
@@ -43,8 +43,8 @@ recordRoutes.route("/items").get(async function (req, res) {
 });
 
 
-recordRoutes.route("/users/:id").get(async function (req, res) {
-    user_id = new ObjectId((req.params.id).toString())
+recordRoutes.route("/users:id").get(async function (req, res) {
+    user_id = new ObjectId((req.query.id).toString())
     const collection = client.db("ProjectDatabase").collection("users");
     collection.find({_id: user_id}).limit(50).toArray(function (err, result) {
         if (err) {
@@ -107,15 +107,3 @@ async function check_unique_name(name) {
 app.listen(PORT, function() {
     console.log(`Listening on Port ${PORT}`);
 });
-
-
-const userRouter = require ("./src/routes/userRouter")
-app.use('/testingUser', userRouter)
-
-
-const loanRouter = require("./src/routes/loanRouter")
-app.use('/testingLoan', loanRouter)
-
-
-const itemRouter = require("./src/routes/itemRouter")
-app.use('/testingItem', itemRouter)
