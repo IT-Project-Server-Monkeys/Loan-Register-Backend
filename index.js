@@ -1,11 +1,16 @@
 const PORT = process.env.PORT || 3000;
 
 
+
 let express = require("express");
 const recordRoutes = express.Router();
 const { ObjectId } = require("mongodb");
 let app = express();
 app.use(express.json());
+var cors = require("cors");
+app.use(cors({origin: '*'}));
+
+
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = "mongodb+srv://phoebe_bear:GoldenDragon1@comp30022-project.yybkyjm.mongodb.net/?retryWrites=true&w=majority"
 

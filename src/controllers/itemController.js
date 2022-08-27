@@ -70,16 +70,7 @@ const getAllItemByItemOwner = async (req,res,next) => {
   }
 }
 
-const  getSpecificItemFrequency = async (req,res,next) => {
-  try{
-    
-    const result = await item.findById(req.query.id).lean()
-    if (!result) {return res.status(400)}
-    return res.loan_frequency;
-} catch (err){
-    return next(err)
-  }
-}
+
 
 
 
