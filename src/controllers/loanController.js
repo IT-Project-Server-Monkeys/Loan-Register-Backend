@@ -139,7 +139,7 @@ const createLoan = async (req,res,next) => {
     if (!loan_result) {return res.status(400)}
     const item_result = await item.findOneAndUpdate({_id: item_id}, {$inc : {'loan_frequency' : 1}, $set : {'being_loaned': true}})
     if (!item_result) {return res.status(400)}
-    return res.json(item_result)
+    return res.json(loan_result)
 } catch (err){
     return next(err)
   }
@@ -167,7 +167,7 @@ const editLoan = async (req,res,next) => {
     if (req.body.actual_return_date) {
       update["actual_return_date"] = new Date(req.body.actual_return_date)
     }
-    
+
     const result = await loan.findOneAndUpdate(query, update, {returnDocument:'after'});
     if (!result) {return res.status(400)}
     return res.json(result)
