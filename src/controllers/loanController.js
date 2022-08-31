@@ -139,7 +139,7 @@ const createLoan = async (req,res,next) => {
     if (!loan_result) {return res.status(400)}
     const item_result = await item.findOneAndUpdate({_id: item_id}, {$inc : {'loan_frequency' : 1}, $set : {'being_loaned': true}})
     if (!item_result) {return res.status(400)}
-    return res.json(loan_result)
+    return res.json({loan_result: loan_result, item_result: item_result})
 } catch (err){
     return next(err)
   }
