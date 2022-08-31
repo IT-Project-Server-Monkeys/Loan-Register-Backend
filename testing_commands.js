@@ -135,6 +135,7 @@ const loan_sunscreen = {
   intended_return_date: new Date("2022-08-25"),
   actual_return_date: new Date()
 }
+
 //create_users()
 //create_items(sunscreen)
 //create_loan(loan_sunscreen)
