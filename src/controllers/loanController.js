@@ -55,7 +55,7 @@ const  getAllLoans = async (req,res,next) => {
 
 const  getSpecificLoan = async (req,res,next) => {
   try{
-    loan_id = new mongoose.Types.ObjectId((req.query.id).toString())
+    loan_id = new mongoose.Types.ObjectId((req.query._id).toString())
     const result = await loan.find({_id: loan_id}).lean()
     if (!result) {return res.status(400)}
     return res.json(result)
