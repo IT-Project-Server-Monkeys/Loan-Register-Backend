@@ -11,6 +11,9 @@ const userHandler = async (req,res,next) => {
   else if (req.query.id) {
     getSpecificUser(req, res, next);
   }
+  else if (req.query.email && req.query.password){
+    checkEmailAndPassword(req,res,next);
+  }
   
 }
 
@@ -33,6 +36,17 @@ const  getSpecificUser = async (req,res,next) => {
     user_id = new mongoose.Types.ObjectId((req.query.id).toString())
     const result = await user.find({_id: user_id}).lean()
     if (!result) {return res.status(400)}
+    return res.json(result)
+} catch (err){
+    return next(err)
+  }
+}
+
+const checkEmailAndPassword = async (req,res,next) => {
+  try{
+    const result = await user.find( {hashed_password: req.query.password, login_email: req.query.email}).lean()
+    if (!result) {return res.status(400)}
+ 
     return res.json(result)
 } catch (err){
     return next(err)
