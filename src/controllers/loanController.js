@@ -1,7 +1,8 @@
 const loan = require('../models/loanModel')
+const item = require('../models/itemModel')
 var mongoose = require('mongoose');
 
-const loanHandler = async (req,res,next) => {
+const loanGetHandler = async (req,res,next) => {
   if (req.query.all && req.query.all.toString() == 1) {
     getAllLoans(req, res, next);
   }
@@ -27,6 +28,19 @@ const loanHandler = async (req,res,next) => {
   }
 
 }
+
+const loanPostHandler = async (req, res, next) => {
+  createLoan(req,res,next);
+}
+
+const loanPutHandler = async (req, res, next) => {
+  editLoan(req,res,next)
+}
+
+const loanDeleteHandler = async (req, res, next) => {
+  deleteLoan(req, res, next)
+}
+
 
 const  getAllLoans = async (req,res,next) => {
   try{
@@ -105,6 +119,80 @@ const getAllLoansbyItem = async (req,res,next) => {
   }
 }
 
+const createLoan = async (req,res,next) => {
+  try{
+    const loaner_id = new mongoose.Types.ObjectId(req.body.loaner_id);
+    const loanee_id = new mongoose.Types.ObjectId(req.body.loanee_id);
+    const item_id = new mongoose.Types.ObjectId(req.body.item_id);
+    const status = (req.body.status).toString()
+    const loan_start_date = new Date(req.body.loan_start_date.toString())
+    const intended_return_date = new Date(req.body.intended_return_date.toString())
+    const loan_result = await loan.create(
+        {loaner_id: loaner_id,
+        loanee_id: loanee_id,
+        item_id: item_id,
+        status: status,
+        loan_start_date: loan_start_date,
+        intended_return_date: intended_return_date,
+      }
+    )
+    if (!loan_result) {return res.status(400)}
+    const item_result = await item.findOneAndUpdate({_id: item_id}, {$inc : {'loan_frequency' : 1}, $set : {'being_loaned': true}})
+    if (!item_result) {return res.status(400)}
+    return res.json(item_result)
+} catch (err){
+    return next(err)
+  }
+}
+
+const editLoan = async (req,res,next) => {
+  try {
+    const _id = new mongoose.Types.ObjectId(req.body._id)
+    const query = {_id: _id}
+    const update = {}
+    
+    if (req.body.loanee_id) {
+      update["loanee_id"] = new mongoose.Types.ObjectId(req.body.loanee_id)
+    }
+    if (req.body.status) {
+      update["status"] = req.body.status
+    }
+    if (req.body.loan_start_date) {
+      update["loan_start_date"] = new Date(req.body.loan_start_date)
+    }
+    if (req.body.intended_return_date) {
+      update["intended_return_date"] = new Date(req.body.intended_return_date)
+    }
+
+    if (req.body.actual_return_date) {
+      update["actual_return_date"] = new Date(req.body.actual_return_date)
+    }
+    
+    const result = await loan.findOneAndUpdate(query, update, {returnDocument:'after'});
+    if (!result) {return res.status(400)}
+    return res.json(result)
+  }
+  catch (err){
+    return next(err)
+  }
+}
+
+const deleteLoan = async (req, res, next) => {
+  try {
+    const _id = new mongoose.Types.ObjectId(req.query._id);
+    const result = await loan.deleteOne({_id: _id});
+    if (!result) {return res.status(400)}
+    return res.json(result)
+  }
+  catch (err){
+    return next(err)
+  }
+}
+
+
 module.exports= {
-  loanHandler
+  loanGetHandler,
+  loanPostHandler,
+  loanPutHandler,
+  loanDeleteHandler
 }

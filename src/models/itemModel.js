@@ -4,11 +4,8 @@ const schema = new mongoose.Schema({
     category:{ type: String, required: true},
     description:{type: String, required: true},
     item_owner: {type: mongoose.Schema.Types.ObjectId, required: true},
-    on_loan: {type: Boolean, required: true},
-
-    loan_count: {type: Number, required:true}
-
-
+    being_loaned: {type: Boolean, required: true},
+    loan_frequency: {type: Number, required:true}
 })
 
 const item = mongoose.model('items', schema)

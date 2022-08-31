@@ -76,6 +76,22 @@ async function create_loan(loan) {
   }
   return result._id
 }
+async function alter_users() {
+  
+  MongoClient.connect(uri, function(err, db) {
+    if (err) throw err;
+    const database = db.db("ProjectDatabase");
+    var myquery = {}
+    var newvalues =  {
+      $set: { "item_categories": ["Electronics", "Books", "Stationary", "University Resources", "Cash", "Miscellaneous", "Personal", "Clothing and Apparel", "Toiletries and Beauty"] } }
+    
+    const result = database.collection("users").updateMany(myquery, newvalues, function (err, res) {
+      if (err) throw err;
+  });
+});
+}
+
+
 
 
 async function update_item(item_id) {
@@ -136,7 +152,65 @@ const loan_sunscreen = {
   actual_return_date: new Date()
 }
 
+const loan_macbook = {
+  "loaner_id": "62fd8a9df04410afbc6df31e",
+  "loanee_id": "62fd8a9df04410afbc6df31d",
+  "item_id": "62fd8cf7fedbec68c80f5878",
+  "status": "Current",
+  "loan_start_date": "2022-08-18",
+  "intended_return_date": "2022-08-25"
+}
 //create_users()
 //create_items(sunscreen)
 //create_loan(loan_sunscreen)
 //update_item("62fd8d5bfd46ebc631b3bc79")
+async function main(){
+
+  await client.connect();
+  MongoClient.connect(uri, function(err, db) {
+      if (err) throw err;
+      db.db("ProjectDatabase").command( { collMod: "loans",
+          validator: {
+            $jsonSchema: {
+                bsonType: "object",
+                required: ["loaner_id", "loanee_id", "item_id", "status", "loan_start_date", "intended_return_date"],
+                properties: {
+                    loaner_id: {
+                        bsonType: "objectId",
+                        description: "The Mongodb ID for the loaner user."
+                    },
+                    loanee_id: {
+                        bsonType: "objectId",
+                        description: "The Mongodb ID for the loanee user."
+                    },
+                    item_id: {
+                        bsonType: "objectId",
+                        description: "The Mongodb ID for the item."
+                    },
+                    status: {
+                        enum: ["Current", "On Time Return", "Late Return", "Early Return"],
+                        description: "Loan status, can only be one of these enum values."
+                    },
+                    loan_start_date: {
+                        bsonType: "date",
+                        description: "Start date."
+                    },
+                    intended_return_date: {
+                        bsonType: "date",
+                        description: "Desired end date."
+                    },
+                    actual_return_date: {
+                      bsonType: "date",
+                      description: "Actual end date."
+                  }
+                }
+            }
+        }
+      }, function(err, res) {
+      if (err) throw err;
+      console.log("Collection created!"); 
+  })
+  });
+}
+main()
+

@@ -8,7 +8,7 @@ const schema = new mongoose.Schema({
         required: true},
     loan_start_date: {type: Date, required: true},
     intended_return_date: {type: Date, required: true},
-    actual_return_date: {type: Date, required: true}
+    actual_return_date: {type: Date, required: false}
 })
 
 const loan = mongoose.model('loans', schema)
