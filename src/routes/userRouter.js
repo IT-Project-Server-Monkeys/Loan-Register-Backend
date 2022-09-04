@@ -3,7 +3,10 @@ const userRouter = express.Router();
 const userController = require('../controllers/userController');
 
 
-userRouter.get('/', userController.userHandler);
+userRouter.get('/', userController.userGetHandler);
+userRouter.post('/', userController.userPostHandler);
+userRouter.put('/', userController.userPutHandler);
+userRouter.delete('/', userController.userDeleteHandler);
 
 
 module.exports = userRouter

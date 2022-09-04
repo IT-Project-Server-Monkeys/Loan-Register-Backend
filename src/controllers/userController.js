@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 
 const user = require("../models/userModel");
 
-const userHandler = async (req,res,next) => {
+const userGetHandler = async (req,res,next) => {
   if (req.query.all && req.query.all.toString() == 1) {
     getAllUsers(req, res, next);
   }
@@ -15,6 +15,18 @@ const userHandler = async (req,res,next) => {
     checkEmailAndPassword(req,res,next);
   }
   
+}
+
+const userPostHandler = async(req,res,next) => {
+  createUser(req, res, next);
+}
+
+const userPutHandler = async(req,res,next) => {
+  updateUser(req,res,next);
+}
+
+const userDeleteHandler = async(req,res,next) => {
+  deleteUser(req,res,next);
 }
 
 
@@ -53,7 +65,77 @@ const checkEmailAndPassword = async (req,res,next) => {
   }
 }
 
+const createUser = async (req,res,next) => {
+  try{
+   
+   
+    
+    const display_name = (req.body.display_name).toString()
+    const login_email = req.body.login_email.toString()
+    const hashed_password = req.body.hashed_password.toString()
+    const item_categories = req.body.item_categories.toString()
+    const new_user = await user.create(
+        {display_name: display_name,
+        login_email: login_email,
+        hashed_password: hashed_password,
+        item_categories: item_categories,
+        
+      }
+    )
+    if (!new_user) {return res.status(400)}
+  
+    return res.json({new_user: new_user})
+} catch (err){
+    return next(err)
+  }
+}
+
+const updateUser = async (req,res,next) => {
+  try {
+    const _id = new mongoose.Types.ObjectId(req.body._id)
+    const query = {_id: _id}
+    const update = {}
+    
+    if (req.body.display_name) {
+      update["display_name"] = req.body.display_name
+    }
+    if (req.body.login_email) {
+      update["login_email"] = req.body.login_email
+    }
+    if (req.body.hashed_password) {
+      update["hashed_password"] = req.body.hashed_password
+    }
+    if (req.body.item_categories) {
+      update["item_categories"] = req.body.item_categories
+    }
+
+
+    const result = await user.findOneAndUpdate(query, update, {returnDocument:'after'});
+    if (!result) {return res.status(400)}
+    return res.json(result)
+  }
+  catch (err){
+    return next(err)
+  }
+}
+
+
+const deleteUser = async (req, res, next) => {
+  try {
+    const _id = new mongoose.Types.ObjectId(req.query._id);
+    const result = await user.deleteOne({_id: _id});
+    if (!result) {return res.status(400)}
+    return res.json(result)
+  }
+  catch (err){
+    return next(err)
+  }
+}
+
 
 module.exports = {
-  userHandler
+  userGetHandler,
+  userPostHandler,
+  userPutHandler,
+  userDeleteHandler
 }
