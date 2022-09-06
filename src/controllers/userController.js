@@ -97,6 +97,7 @@ const updateUser = async (req,res,next) => {
     const query = {_id: _id}
     const update = {}
     
+    
     if (req.body.display_name) {
       update["display_name"] = req.body.display_name
     }
@@ -106,11 +107,17 @@ const updateUser = async (req,res,next) => {
     if (req.body.hashed_password) {
       update["hashed_password"] = req.body.hashed_password
     }
-    if (req.body.item_categories) {
+    if (req.body.new_category) {
+      await user.findOneAndUpdate(query,{$addToSet:{"item_categories": req.body.new_category}},{returnDocument:'after'})
+    }
+    if (req.body.delete_category){
+      await user.findOneAndUpdate(query,{$pull:{"item_categories": req.body.delete_category}},{returnDocument:'after'})
+    }
+    if (req.body.item_categories){
       update["item_categories"] = req.body.item_categories
     }
 
-
+   
     const result = await user.findOneAndUpdate(query, update, {returnDocument:'after'});
     if (!result) {return res.status(400)}
     return res.json(result)
