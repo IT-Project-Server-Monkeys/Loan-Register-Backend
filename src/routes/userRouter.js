@@ -1,6 +1,7 @@
 const express = require('express');
 const userRouter = express.Router();
 const userController = require('../controllers/userController');
+const bodyParser = require('body-parser');
 
 
 userRouter.get('/', userController.userGetHandler);

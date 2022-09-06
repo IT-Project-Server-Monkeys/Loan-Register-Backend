@@ -97,25 +97,26 @@ const getAllItemByItemOwner = async (req,res,next) => {
 
 const createItem = async (req,res,next) => {
   try{
-    const itemName =req.body.itemName.toString();
-    const category =req.body.category.toString();
-    const description = req.body.descrition.toString();
+    const item_name =req.body.item_name;
+    const category =req.body.category;
+    const description = req.body.description;
     const item_owner = new mongoose.Types.ObjectId(req.body.item_owner);
-    const being_loaned = req.body.being_loaned;
-  
+    
+   
     const item_result = await item.create(
-        {itemName: itemName,
+        {item_name: item_name,
         category: category,
         description: description,
         item_owner: item_owner,
-        being_loaned: being_loaned,
+        being_loaned: false,
+        loan_frequency: 0
+       
         
       }
     )
+  
     if (!item_result) {return res.status(400)}
-   
-    if (!item_result) {return res.status(400)}
-    return res.json({item_result: item_result})
+    return res.json(item_result)
 } catch (err){
     return next(err)
   }
@@ -127,8 +128,8 @@ const editItem = async (req,res,next) => {
     const query = {_id: _id}
     const update = {}
     
-    if (req.body.itemName) {
-      update["itemName"] = req.body.itemName
+    if (req.body.item_name) {
+      update["item_name"] = req.body.item_name
     }
     if (req.body.category) {
       update["category"] = req.body.category

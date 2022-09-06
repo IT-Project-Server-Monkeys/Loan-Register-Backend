@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 const schema = new mongoose.Schema({
-    itemName: { type: String , required: true},
+    item_name: { type: String , required: true},
     category:{ type: String, required: true},
     description:{type: String, required: true},
-    item_owner: {type: mongoose.Schema.Types.ObjectId, required: true},
-    being_loaned: {type: Boolean, required: true},
-    loan_frequency: {type: Number, required:true}
+    item_owner: {type: mongoose.Schema.Types.ObjectId,required:true},
+    being_loaned: {type: Boolean,required:true},
+    loan_frequency: {type: Number,required:true}
 })
 
 const item = mongoose.model('items', schema)

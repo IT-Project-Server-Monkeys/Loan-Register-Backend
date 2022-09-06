@@ -1,7 +1,7 @@
 
 var mongoose = require('mongoose');
 
-
+const bodyParser = require('body-parser');
 const user = require("../models/userModel");
 
 const userGetHandler = async (req,res,next) => {
@@ -71,6 +71,7 @@ const createUser = async (req,res,next) => {
    
     
     const display_name = req.body.display_name
+ 
     const login_email = req.body.login_email
     const hashed_password = req.body.hashed_password
     const item_categories = req.body.item_categories
@@ -78,13 +79,13 @@ const createUser = async (req,res,next) => {
         {display_name: display_name,
         login_email: login_email,
         hashed_password: hashed_password,
-        item_categories: item_categories,
+        item_categories: item_categories
         
       }
     )
     if (!new_user) {return res.status(400)}
   
-    return res.json({new_user: new_user})
+    return res.json(new_user)
 } catch (err){
     return next(err)
   }

@@ -1,6 +1,7 @@
 const express = require('express');
 const loanRouter = express.Router()
 const loanController = require('../controllers/loanController');
+const bodyParser = require('body-parser');
 
 
 loanRouter.get('/', loanController.loanGetHandler)
