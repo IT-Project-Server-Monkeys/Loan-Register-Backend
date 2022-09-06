@@ -97,7 +97,7 @@ const getAllItemByItemOwner = async (req,res,next) => {
 
 const createItem = async (req,res,next) => {
   try{
-    const itemName =req.body.loaner.itemName.toString();
+    const itemName =req.body.itemName.toString();
     const category =req.body.category.toString();
     const description = req.body.descrition.toString();
     const item_owner = new mongoose.Types.ObjectId(req.body.item_owner);
