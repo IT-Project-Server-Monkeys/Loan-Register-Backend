@@ -70,10 +70,10 @@ const createUser = async (req,res,next) => {
    
    
     
-    const display_name = (req.body.display_name).toString()
-    const login_email = req.body.login_email.toString()
-    const hashed_password = req.body.hashed_password.toString()
-    const item_categories = req.body.item_categories.toString()
+    const display_name = req.body.display_name
+    const login_email = req.body.login_email
+    const hashed_password = req.body.hashed_password
+    const item_categories = req.body.item_categories
     const new_user = await user.create(
         {display_name: display_name,
         login_email: login_email,
