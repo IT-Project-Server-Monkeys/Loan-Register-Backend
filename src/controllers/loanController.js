@@ -29,7 +29,7 @@ const loanGetHandler = async (req,res,next) => {
     }
     getAllLoansbyItem(req, res, next)
   }
-  
+
   else if (req.query.status) {
     getAllLoansbyStatus(req,res,next);
   }
@@ -140,10 +140,12 @@ const getAllLoansbyItem = async (req,res,next) => {
 }
 
 const createLoan = async (req,res,next) => {
-  try{
+  try{   
     const loaner_id = new mongoose.Types.ObjectId(req.body.loaner_id);
     const loanee_id = new mongoose.Types.ObjectId(req.body.loanee_id);
     const item_id = new mongoose.Types.ObjectId(req.body.item_id);
+    const currentLoansExist = await checkCurrentLoans(item_id);
+    if (currentLoansExist) {return res.status(400)}
     const status = (req.body.status).toString()
     const loan_start_date = new Date(req.body.loan_start_date.toString())
     const intended_return_date = new Date(req.body.intended_return_date.toString())
@@ -245,6 +247,13 @@ const getAllLoansbyStatus = async (req,res,next) => {
     return next(err)
   }
 }
+
+
+const checkCurrentLoans = async (item_id) => {
+  const result = await loan.find({item_id: item_id, status:"Current"}).lean()
+  return (length(result)>1)
+}
+
 
 
 
