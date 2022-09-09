@@ -29,7 +29,10 @@ const loanGetHandler = async (req,res,next) => {
     }
     getAllLoansbyItem(req, res, next)
   }
-
+  
+  else if (req.query.status) {
+    getAllLoansbyStatus(req,res,next);
+  }
 }
 
 const loanPostHandler = async (req, res, next) => {
@@ -231,6 +234,18 @@ function getStatus(req) {
   }
   return status;
 }
+
+const getAllLoansbyStatus = async (req,res,next) => {
+  try {
+    const status = getStatus(req)
+    const result = await loan.find({status:status}).lean()
+    if (!result) {return res.status(400)}
+    return res.json(result)
+  } catch (err) {
+    return next(err)
+  }
+}
+
 
 
 module.exports= {
