@@ -251,7 +251,7 @@ const getAllLoansbyStatus = async (req,res,next) => {
 
 const checkCurrentLoans = async (item_id) => {
   const result = await loan.find({item_id: item_id, status:"Current"}).lean()
-  return (length(result)>1)
+  return (result.length > 1)
 }
 
 
