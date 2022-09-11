@@ -30,3 +30,6 @@ app.use('/loans', loanRouter)
 
 const itemRouter = require("./src/routes/itemRouter")
 app.use('/items', itemRouter)
+
+const dashboardRouter = require("./src/routes/dashboardRouter")
+app.use('/dashboard', dashboardRouter)
