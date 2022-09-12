@@ -1,5 +1,7 @@
 
 const item = require('../models/itemModel')
+const loan = require('../models/loanModel')
+const user = require("../models/userModel");
 var mongoose = require('mongoose');
 
 
@@ -162,9 +164,17 @@ const editItem = async (req,res,next) => {
 const deleteItem = async (req, res, next) => {
   try {
     const _id = new mongoose.Types.ObjectId(req.query._id);
-    const result = await item.deleteOne({_id: _id});
-    if (!result) {return res.status(400)}
-    return res.json(result)
+    const loan_associated = await loan.find({item_id:_id}).lean();
+    if (!loan_associated){
+      const delete_result = await item.deleteOne({_id: _id});
+    if (!delete_result) {return res.status(400)}
+    return res.json(delete_result)
+
+    }else{
+      return res.status(400).json({message: "Item is currently being loaned and cannot be deleted"})
+
+    }
+   
   }
   catch (err){
     return next(err)

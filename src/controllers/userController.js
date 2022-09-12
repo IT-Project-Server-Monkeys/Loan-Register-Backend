@@ -1,4 +1,5 @@
-
+const loan = require('../models/loanModel')
+const item = require('../models/itemModel')
 var mongoose = require('mongoose');
 
 const bodyParser = require('body-parser');
@@ -150,10 +151,17 @@ const updateUser = async (req,res,next) => {
 const deleteUser = async (req, res, next) => {
   try {
     const _id = new mongoose.Types.ObjectId(req.query._id);
-    const result = await user.deleteOne({_id: _id});
-    if (!result) {return res.status(400)}
-    return res.json(result)
-  }
+    //have to implement check if user own any items and dont appear in any loan
+    const item_associated = await item.find({item_owner: _id}).lean();
+    const loan_associated = await loan.find({$or:[{loaner_id: _id},{loanee_id: _id}]}).lean();
+    if (!item_associated || !loan_associated){
+      const result = await user.deleteOne({_id: _id});
+      if (!result) {return res.status(400)}
+      return res.json(result)
+
+    }else{
+      return res.status(400).json({message: "User cannot be deleted"})
+    }}
   catch (err){
     return next(err)
   }
