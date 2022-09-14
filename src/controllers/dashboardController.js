@@ -125,5 +125,4 @@ const dashboardGetHandler = async (req,res,next) => {
 
 module.exports= {
   dashboardGetHandler,
-  testPostHandler
 }

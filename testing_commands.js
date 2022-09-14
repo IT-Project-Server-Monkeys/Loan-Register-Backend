@@ -173,36 +173,32 @@ async function main(){
           validator: {
             $jsonSchema: {
                 bsonType: "object",
-                required: ["loaner_id", "loanee_id", "item_id", "status", "loan_start_date", "intended_return_date"],
+                required: ["item_name", "category", "description", "item_owner", "being_loaned", "loan_frequency"],
                 properties: {
-                    loaner_id: {
-                        bsonType: "objectId",
+                    item_name: {
+                        bsonType: "string",
                         description: "The Mongodb ID for the loaner user."
                     },
-                    loanee_id: {
-                        bsonType: "objectId",
+                    category: {
+                        bsonType: "string",
                         description: "The Mongodb ID for the loanee user."
                     },
-                    item_id: {
-                        bsonType: "objectId",
+                    description: {
+                        bsonType: "string",
                         description: "The Mongodb ID for the item."
                     },
-                    status: {
-                        enum: ["Current", "On Time Return", "Late Return", "Early Return"],
+                    item_owner: {
+                        bsonType: "objectId",
                         description: "Loan status, can only be one of these enum values."
                     },
-                    loan_start_date: {
-                        bsonType: "date",
+                    being_loaned: {
+                        bsonType: "boolean",
                         description: "Start date."
                     },
-                    intended_return_date: {
-                        bsonType: "date",
+                    loan_frequency: {
+                        bsonType: "number",
                         description: "Desired end date."
-                    },
-                    actual_return_date: {
-                      bsonType: "date",
-                      description: "Actual end date."
-                  }
+                    }
                 }
             }
         }
@@ -212,5 +208,15 @@ async function main(){
   })
   });
 }
+
+const schema = new mongoose.Schema({
+  item_name: { type: String , required: true},
+  category:{ type: String, required: true},
+  description:{type: String, required: true},
+  item_owner: {type: mongoose.Schema.Types.ObjectId,required:true},
+  being_loaned: {type: Boolean,required:true},
+  loan_frequency: {type: Number,required:true}
+})
+
 main()
 
