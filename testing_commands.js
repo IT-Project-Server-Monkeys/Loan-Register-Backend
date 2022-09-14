@@ -177,27 +177,31 @@ async function main(){
                 properties: {
                     item_name: {
                         bsonType: "string",
-                        description: "The Mongodb ID for the loaner user."
+                        description: "Name of the item."
                     },
                     category: {
                         bsonType: "string",
-                        description: "The Mongodb ID for the loanee user."
+                        description: "Category of item."
                     },
                     description: {
                         bsonType: "string",
-                        description: "The Mongodb ID for the item."
+                        description: "Description of item."
                     },
                     item_owner: {
                         bsonType: "objectId",
-                        description: "Loan status, can only be one of these enum values."
+                        description: "Owner of the item."
                     },
                     being_loaned: {
-                        bsonType: "boolean",
-                        description: "Start date."
+                        bsonType: "bool",
+                        description: "If item is currently being loaned."
                     },
                     loan_frequency: {
-                        bsonType: "number",
-                        description: "Desired end date."
+                        bsonType: "int",
+                        description: "Number of times item has been loaned."
+                    },
+                    item_url: {
+                      bsonType: "string",
+                      description: "Image url"
                     }
                 }
             }
@@ -208,15 +212,6 @@ async function main(){
   })
   });
 }
-
-const schema = new mongoose.Schema({
-  item_name: { type: String , required: true},
-  category:{ type: String, required: true},
-  description:{type: String, required: true},
-  item_owner: {type: mongoose.Schema.Types.ObjectId,required:true},
-  being_loaned: {type: Boolean,required:true},
-  loan_frequency: {type: Number,required:true}
-})
 
 main()
 
