@@ -15,6 +15,8 @@ const userGetHandler = async (req,res,next) => {
   else if (req.query.email && req.query.password){
     checkEmailAndPassword(req,res,next);
     
+  }else if (req.query.email){
+    getSpecificUserBaseOnEmail(req,res,next);
   }
   
 }
@@ -58,15 +60,15 @@ const  getSpecificUser = async (req,res,next) => {
   }
 }
 
-const getSpecificUserItemCategory = async(req,res,next) => {
+
+
+
+const getSpecificUserBaseOnEmail = async(req,res,next) => {
   try{
-  
-    const result = await user.findById(req.query.id).lean()
+    const result = await user.find({login_email: req.query.email}).lean()
     if (!result) {return res.status(400)}
-     
-    
-    return res.json(result.item_categories)
-} catch (err){
+    return res.json(result)
+  } catch (err){
     return next(err)
   }
 }
