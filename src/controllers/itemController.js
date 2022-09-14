@@ -19,11 +19,6 @@ const itemGetHandler = async (req,res,next) => {
     getAllItemByItemOwner(req,res,next);
     
   }
-  
-  
- 
-
-
 }
 
 const itemPostHandler = async(req,res,next) => {
@@ -154,11 +149,6 @@ const editItem = async (req,res,next) => {
   }
 }
 
-
-
-
-
-
 const deleteItem = async (req, res, next) => {
   try {
     const _id = new mongoose.Types.ObjectId(req.query._id);
@@ -170,13 +160,6 @@ const deleteItem = async (req, res, next) => {
     return next(err)
   }
 }
-
-
-
-
-
-
-
 
 
 module.exports= {

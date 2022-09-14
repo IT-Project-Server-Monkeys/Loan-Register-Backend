@@ -27,7 +27,9 @@ const loanGetHandler = async (req,res,next) => {
     if (req.query.status) {
       getAllLoansbyItemandStatus(req,res,next)
     }
+    else {
     getAllLoansbyItem(req, res, next)
+    }
   }
 
   else if (req.query.status) {

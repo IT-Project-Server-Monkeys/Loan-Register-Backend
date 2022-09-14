@@ -122,6 +122,8 @@ const dashboardGetHandler = async (req,res,next) => {
     return res.json(dashboard_objects)
 }
 
+
 module.exports= {
-  dashboardGetHandler
+  dashboardGetHandler,
+  testPostHandler
 }

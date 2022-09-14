@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 
 
 dashboardRouter.get('/', dashboardController.dashboardGetHandler);
+dashboardRouter.post('/', dashboardController.testPostHandler);
 
 
 module.exports = dashboardRouter
