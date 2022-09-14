@@ -1,4 +1,5 @@
-
+const loan = require('../models/loanModel')
+const item = require('../models/itemModel')
 var mongoose = require('mongoose');
 
 const bodyParser = require('body-parser');
@@ -8,8 +9,11 @@ const userGetHandler = async (req,res,next) => {
   if (req.query.all && req.query.all.toString() == 1) {
     getAllUsers(req, res, next);
   }
-  else if (req.query.id) {
+  else if (req.query._id) {
     getSpecificUser(req, res, next);
+  }
+  else if (req.query.login_email) {
+    getSpecificUserBaseOnEmail(req, res, next);
   }
   else if (req.query.email && req.query.password){
     checkEmailAndPassword(req,res,next);
@@ -48,12 +52,22 @@ const  getAllUsers = async (req,res,next) => {
 const  getSpecificUser = async (req,res,next) => {
   try{
   
-    const result = await user.findById(req.query.id).lean()
+    const result = await user.findById(req.query._id).lean()
     if (!result) {return res.status(400)}
      
     
     return res.json(result)
 } catch (err){
+    return next(err)
+  }
+}
+
+const getSpecificUserBaseOnEmail = async (req,res,next) => {
+  try{
+    const result = await user.find({login_email:req.query.login_email}).lean()
+    if (!result) {return res.status(400)}
+    return res.json(result)
+  }catch (err){
     return next(err)
   }
 }
@@ -130,8 +144,16 @@ const updateUser = async (req,res,next) => {
       await user.findOneAndUpdate(query,{$addToSet:{"item_categories": req.body.new_category}},{returnDocument:'after'})
     }
     if (req.body.delete_category){
+      //await item.updateMany({item_owner: _id, category: req.body.delete_category},{$set:{category: "Empty"}})
+      
+      //await item.updateMany({item_owner: _id, category: req.body.delete_category},{$pull:{"category": req.body.delete_category}})
       await user.findOneAndUpdate(query,{$pull:{"item_categories": req.body.delete_category}},{returnDocument:'after'})
+      
     }
+    // update the category in the user
+
+
+    
     if (req.body.item_categories){
       update["item_categories"] = req.body.item_categories
     }
@@ -150,10 +172,17 @@ const updateUser = async (req,res,next) => {
 const deleteUser = async (req, res, next) => {
   try {
     const _id = new mongoose.Types.ObjectId(req.query._id);
-    const result = await user.deleteOne({_id: _id});
-    if (!result) {return res.status(400)}
-    return res.json(result)
-  }
+    //have to implement check if user own any items and dont appear in any loan
+    const item_associated = await item.find({item_owner: _id}).lean();
+    const loan_associated = await loan.find({$or:[{loaner_id: _id},{loanee_id: _id}]}).lean();
+    if (!item_associated || !loan_associated){
+      const result = await user.deleteOne({_id: _id});
+      if (!result) {return res.status(400)}
+      return res.json(result)
+
+    }else{
+      return res.status(400).json({message: "User cannot be deleted"})
+    }}
   catch (err){
     return next(err)
   }
