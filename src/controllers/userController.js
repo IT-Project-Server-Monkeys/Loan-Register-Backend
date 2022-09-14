@@ -9,11 +9,8 @@ const userGetHandler = async (req,res,next) => {
   if (req.query.all && req.query.all.toString() == 1) {
     getAllUsers(req, res, next);
   }
-  else if (req.query._id) {
+  else if (req.query.id) {
     getSpecificUser(req, res, next);
-  }
-  else if (req.query.login_email) {
-    getSpecificUserBaseOnEmail(req, res, next);
   }
   else if (req.query.email && req.query.password){
     checkEmailAndPassword(req,res,next);
@@ -52,22 +49,12 @@ const  getAllUsers = async (req,res,next) => {
 const  getSpecificUser = async (req,res,next) => {
   try{
   
-    const result = await user.findById(req.query._id).lean()
+    const result = await user.findById(req.query.id).lean()
     if (!result) {return res.status(400)}
      
     
     return res.json(result)
 } catch (err){
-    return next(err)
-  }
-}
-
-const getSpecificUserBaseOnEmail = async (req,res,next) => {
-  try{
-    const result = await user.find({login_email:req.query.login_email}).lean()
-    if (!result) {return res.status(400)}
-    return res.json(result)
-  }catch (err){
     return next(err)
   }
 }
@@ -139,16 +126,8 @@ const updateUser = async (req,res,next) => {
       await user.findOneAndUpdate(query,{$addToSet:{"item_categories": req.body.new_category}},{returnDocument:'after'})
     }
     if (req.body.delete_category){
-      //await item.updateMany({item_owner: _id, category: req.body.delete_category},{$set:{category: "Empty"}})
-      
-      //await item.updateMany({item_owner: _id, category: req.body.delete_category},{$pull:{"category": req.body.delete_category}})
       await user.findOneAndUpdate(query,{$pull:{"item_categories": req.body.delete_category}},{returnDocument:'after'})
-      
     }
-    // update the category in the user
-
-
-    
     if (req.body.item_categories){
       update["item_categories"] = req.body.item_categories
     }
