@@ -169,7 +169,7 @@ async function main(){
   await client.connect();
   MongoClient.connect(uri, function(err, db) {
       if (err) throw err;
-      db.db("ProjectDatabase").command( { collMod: "loans",
+      db.db("ProjectDatabase").command( { collMod: "items",
           validator: {
             $jsonSchema: {
                 bsonType: "object",

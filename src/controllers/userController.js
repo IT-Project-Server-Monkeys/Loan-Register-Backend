@@ -100,20 +100,15 @@ const checkEmailAndPassword = async (req,res,next) => {
 
 const createUser = async (req,res,next) => {
   try{
-   
-   
-    
     const display_name = req.body.display_name
- 
     const login_email = req.body.login_email
     const hashed_password = req.body.hashed_password
-    const item_categories = req.body.item_categories
+    const item_categories = ["Electronics", "Books", "Stationary", "University Resources", "Cash", "Miscellaneous", "Personal", "Clothing and Apparel", "Toiletries and Beauty"]
     const new_user = await user.create(
         {display_name: display_name,
         login_email: login_email,
         hashed_password: hashed_password,
-        item_categories: item_categories
-        
+        item_categories: item_categories 
       }
     )
     if (!new_user) {return res.status(400)}
