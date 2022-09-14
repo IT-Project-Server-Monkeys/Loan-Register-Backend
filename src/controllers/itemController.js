@@ -99,10 +99,6 @@ const createItem = async (req,res,next) => {
     const category =req.body.category;
     const description = req.body.description;
     const item_owner = new mongoose.Types.ObjectId(req.body.item_owner);
-    var image_url = null;
-    if (req.body.image_enc) {
-      image_url = await imageUpload(req.body.image_enc.toString());
-    }
     item_object = {item_name: item_name,
       category: category,
       description: description,
@@ -110,18 +106,14 @@ const createItem = async (req,res,next) => {
       being_loaned: false,
       loan_frequency: 0
     }
-    if (image_url) {
-      console.log("Adding image url to item object!")
+    if (req.body.image_enc) {
+      image_url = await imageUpload(req.body.image_enc.toString());
       item_object["image_url"] = image_url
     }
-
-    console.log(item_object)
-
     const item_result = await item.create(item_object)
   
     if (!item_result) {return res.status(400)}
     return res.json(item_result)
-    return res.json({"uri": uri});
   } catch (err){
     return next(err)
   }
@@ -148,6 +140,10 @@ const editItem = async (req,res,next) => {
 
     if (req.body.being_loaned) {
       update["being_loaned"] = req.body.being_loaned
+    }
+    if (req.body.image_enc) {
+      image_url = await imageUpload(req.body.image_enc.toString());
+      update["image_url"] = image_url
     }
 
     const result = await item.findOneAndUpdate(query, update, {returnDocument:'after'});
