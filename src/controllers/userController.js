@@ -19,7 +19,6 @@ const userGetHandler = async (req,res,next) => {
     getSpecificUserBaseOnEmail(req,res,next);
   }
   
-  
 }
 
 const userPostHandler = async(req,res,next) => {
@@ -132,9 +131,7 @@ const updateUser = async (req,res,next) => {
     }
     if (req.body.item_categories){
       update["item_categories"] = req.body.item_categories
-    }
-
-   
+    }   
     const result = await user.findOneAndUpdate(query, update, {returnDocument:'after'});
     if (!result) {return res.status(400)}
     return res.json(result)
