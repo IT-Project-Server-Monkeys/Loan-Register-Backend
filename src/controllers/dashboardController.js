@@ -39,6 +39,10 @@ const dashboardGetHandler = async (req,res,next) => {
         new_object['description'] = element['description']
         new_object['being_loaned'] = element['being_loaned']
         new_object['loan_frequency'] = element['loan_frequency']
+        if (element['image_url']) {
+            new_object['image_url'] = element['image_url']
+        }
+
         if (element['being_loaned'] == true) {
             var loan_details = (await loan.find({item_id: new mongoose.Types.ObjectId(element["_id"]), status: "Current"}).lean())[0]
             var loanee_name = (await user.find({_id: new mongoose.Types.ObjectId(loan_details['loanee_id'])}).lean())[0]
@@ -78,6 +82,9 @@ const dashboardGetHandler = async (req,res,next) => {
         new_object['description'] = item_details['description']
         new_object['being_loaned'] = item_details['being_loaned']
         new_object['loan_frequency'] = item_details['loan_frequency']
+        if (item_details['image_url']) {
+            new_object['image_url'] = item_details['image_url']
+        }
         new_object['loaner_id'] = element['loaner_id']
         new_object['loaner_name'] = loaner_details['display_name']
         new_object['loan_start_date'] = element['loan_start_date']
@@ -105,6 +112,9 @@ const dashboardGetHandler = async (req,res,next) => {
         new_object['description'] = item_details['description']
         new_object['being_loaned'] = item_details['being_loaned']
         new_object['loan_frequency'] = item_details['loan_frequency']
+        if (item_details['image_url']) {
+            new_object['image_url'] = item_details['image_url']
+        }
         new_object['loaner_id'] = element['loaner_id']
         new_object['loaner_name'] = loaner_details['display_name']
         new_object['loan_start_date'] = element['loan_start_date']
@@ -118,7 +128,6 @@ const dashboardGetHandler = async (req,res,next) => {
         }
         dashboard_objects.push(new_object)
     }
-    
     return res.json(dashboard_objects)
 }
 
