@@ -160,48 +160,46 @@ const loan_macbook = {
   "loan_start_date": "2022-08-18",
   "intended_return_date": "2022-08-25"
 }
-//create_users()
-//create_items(sunscreen)
-//create_loan(loan_sunscreen)
-//update_item("62fd8d5bfd46ebc631b3bc79")
+
 async function main(){
 
   await client.connect();
   MongoClient.connect(uri, function(err, db) {
       if (err) throw err;
-      db.db("ProjectDatabase").command( { collMod: "items",
+      db.db("ProjectDatabase").command( { collMod: "loans",
           validator: {
             $jsonSchema: {
                 bsonType: "object",
-                required: ["item_name", "category", "description", "item_owner", "being_loaned", "loan_frequency"],
+                required: ["loaner_id", "loanee_id", "item_id", "status", "loan_start_date", "intended_return_date"],
                 properties: {
-                    item_name: {
-                        bsonType: "string",
-                        description: "Name of the item."
-                    },
-                    category: {
-                        bsonType: "string",
-                        description: "Category of item."
-                    },
-                    description: {
-                        bsonType: "string",
-                        description: "Description of item."
-                    },
-                    item_owner: {
+                    loaner_id: {
                         bsonType: "objectId",
-                        description: "Owner of the item."
+                        description: "loaner id."
                     },
-                    being_loaned: {
-                        bsonType: "bool",
-                        description: "If item is currently being loaned."
+                    loanee_id: {
+                        bsonType: "objectId",
+                        description: "loanee id."
                     },
-                    loan_frequency: {
-                        bsonType: "int",
-                        description: "Number of times item has been loaned."
+                    item_id: {
+                        bsonType: "objectId",
+                        description: "item owner."
                     },
-                    item_url: {
-                      bsonType: "string",
-                      description: "Image url"
+                    status: {
+                        bsonType: "string",
+                        enum: ["On Loan", "Overdue", "On Time Return", "Late Return", "Early Return"],
+                        description: "loan status."
+                    },
+                    loan_start_date: {
+                        bsonType: "date",
+                        description: "Loan start date."
+                    },
+                    intended_return_date: {
+                        bsonType: "date",
+                        description: "Intended return date."
+                    },
+                    actual_return_date: {
+                      bsonType: "date",
+                      description: "Actual return date"
                     }
                 }
             }

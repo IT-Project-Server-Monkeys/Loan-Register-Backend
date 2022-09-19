@@ -4,7 +4,7 @@ const schema = new mongoose.Schema({
     loanee_id: {type: mongoose.Schema.Types.ObjectId, required: true},
     item_id: {type: mongoose.Schema.Types.ObjectId, required: true},
     status: {type: String,
-        enum: ["Current", "On Time Return", "Late Return", "Early Return"],
+        enum: ["On Loan", "Overdue", "On Time Return", "Late Return", "Early Return"],
         required: true},
     loan_start_date: {type: Date, required: true},
     intended_return_date: {type: Date, required: true},
