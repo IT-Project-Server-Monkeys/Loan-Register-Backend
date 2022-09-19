@@ -17,6 +17,8 @@ const userGetHandler = async (req,res,next) => {
     
   }else if (req.query.email){
     getSpecificUserBaseOnEmail(req,res,next);
+  }else if (req.query.display_name){
+    getSpecificUserBaseOnDisplayName(req,res,next);
   }
   
 }
@@ -71,6 +73,17 @@ const getSpecificUserBaseOnEmail = async(req,res,next) => {
   } catch (err){
     return next(err)
   }
+}
+
+const getSpecificUserBaseOnDisplayName = async (req,res,next) => {
+  try{
+    const result = await user.find({display_name: req.query.display_name}).lean()
+    if (!result) {return res.status(400)}
+    return res.json(result)
+  } catch (err){
+    return next(err)
+  }
+
 }
 
 
