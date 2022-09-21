@@ -197,7 +197,7 @@ const editLoan = async (req,res,next) => {
     }
     if (req.body.status) {
       update["status"] = req.body.status
-      if (req.body.status != "Current") {
+      if (req.body.status.includes("Return")) {
         console.log("Getting loan details")
         const loan_details = await loan.find({_id: _id}).lean()
         console.log(loan_details)
