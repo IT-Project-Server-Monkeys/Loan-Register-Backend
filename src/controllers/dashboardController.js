@@ -9,23 +9,14 @@ const dashboardGetHandler = async (req,res,next) => {
     const user_categories = (await user.find({_id: user_id}).lean())[0]['item_categories']
 
     const owned_items = await item.find({item_owner: user_id}).lean()
+
+    // now, need to get all loans to user, and get the items from them. Then, need to get unique list. 
     
-    const current_loans_to_user = await loan.find({loanee_id: user_id, status: "Current"}).lean()
-    var current_item_ids = []
-        
-    current_loans_to_user.forEach((element) => {
-        current_item_ids.push(element['item_id'])
-    });
+    const all_loan_items = await loan.find({loanee_id:user_id}).sort({loan_start_date: -1}).lean()
+    const unique_items = [...new Set (all_loan_items.map(element => {return element['item_id'].toString()}))];
+    var recipient_loans = []
+    unique_items.forEach( item => recipient_loans.push(all_loan_items.find(loan => loan['item_id'].toString() == item)))
 
-    var old_item_ids = []
-    const old_loans_to_user = await loan.find({loanee_id: user_id, status: {$ne: "Current"} }).lean()
-    console.log(old_loans_to_user)
-    old_loans_to_user.forEach((element) => {
-        old_item_ids.push(element['item_id'])
-    })
-
-    var items_for_old_loans = old_item_ids.filter(element => !current_item_ids.includes(element))
-    var old_loans_to_parse = old_loans_to_user.filter(loan => items_for_old_loans.includes(loan['item_id']))
 
     var dashboard_objects = []
     for (const element of owned_items) {
@@ -33,26 +24,16 @@ const dashboardGetHandler = async (req,res,next) => {
         new_object['user_role'] = "loaner";
         new_object['item_categories'] = user_categories;
         new_object['item_id'] = element['_id']
+        get_item_details(element, new_object)
 
-        new_object['item_name'] = element['item_name']
-        new_object['category'] = element['category']
-        new_object['description'] = element['description']
-        new_object['being_loaned'] = element['being_loaned']
-        new_object['loan_frequency'] = element['loan_frequency']
         if (element['being_loaned'] == true) {
-            var loan_details = (await loan.find({item_id: new mongoose.Types.ObjectId(element["_id"]), status: "Current"}).lean())[0]
+            item_id = new mongoose.Types.ObjectId(element["_id"]);
+            var loan_details = (await loan.find({
+                $and: [{$or: [{status: "On Loan"}, {status: "Overdue"}]},
+                {item_id: item_id}]}).lean())[0]
             var loanee_name = (await user.find({_id: new mongoose.Types.ObjectId(loan_details['loanee_id'])}).lean())[0]
-            new_object['loanee_id'] = loan_details['loanee_id']
+            get_loan_details(loan_details, new_object)
             new_object['loanee_name'] = loanee_name['display_name']
-            new_object['loan_start_date'] = loan_details['loan_start_date']
-            new_object['intended_return_date'] = loan_details['intended_return_date']
-            new_object['loan_status'] = "Current"
-            if (loan_details['actual_return_date']) {
-                new_object['actual_return_date'] = loan_details['actual_return_date']
-            }
-            else {
-                new_object['actual_return_date'] = null
-            }
         }
         else {
             new_object['loanee_id'] = null
@@ -64,8 +45,7 @@ const dashboardGetHandler = async (req,res,next) => {
         }     
         dashboard_objects.push(new_object)
     }
-
-    for (const element of current_loans_to_user) {
+    for (const element of recipient_loans) {
         var new_object = {}
         new_object['user_role'] = "loanee";
         new_object['item_categories'] = user_categories;
@@ -73,55 +53,39 @@ const dashboardGetHandler = async (req,res,next) => {
         var item_id = new mongoose.Types.ObjectId(element['item_id'])
         var item_details = (await item.find({_id: item_id}).lean())[0]
         var loaner_details = (await user.find({_id: new mongoose.Types.ObjectId(element['loaner_id'])}).lean())[0]
-        new_object['item_name'] = item_details['item_name']
-        new_object['category'] = item_details['category']
-        new_object['description'] = item_details['description']
-        new_object['being_loaned'] = item_details['being_loaned']
-        new_object['loan_frequency'] = item_details['loan_frequency']
-        new_object['loaner_id'] = element['loaner_id']
+        get_item_details(item_details, new_object)
+        get_loan_details(element, new_object)
         new_object['loaner_name'] = loaner_details['display_name']
-        new_object['loan_start_date'] = element['loan_start_date']
-        new_object['intended_return_date'] = element['intended_return_date']
-        new_object['loan_status'] = 'Current'
-        if (loan_details['actual_return_date']) {
-            new_object['actual_return_date'] = element['actual_return_date']
-        }
-        else {
-            new_object['actual_return_date'] = null
-        }
-    dashboard_objects.push(new_object)
-    }
-
-    for (const element of old_loans_to_parse) {
-        var new_object = {}
-        new_object['user_role'] = "loanee";
-        new_object['item_categories'] = user_categories;
-        new_object['item_id'] = element['item_id']
-        var item_id = new mongoose.Types.ObjectId(element['item_id'])
-        var item_details = (await item.find({_id: item_id}).lean())[0]
-        var loaner_details = (await user.find({_id: new mongoose.Types.ObjectId(element['loaner_id'])}).lean())[0]
-        new_object['item_name'] = item_details['item_name']
-        new_object['category'] = item_details['category']
-        new_object['description'] = item_details['description']
-        new_object['being_loaned'] = item_details['being_loaned']
-        new_object['loan_frequency'] = item_details['loan_frequency']
-        new_object['loaner_id'] = element['loaner_id']
-        new_object['loaner_name'] = loaner_details['display_name']
-        new_object['loan_start_date'] = element['loan_start_date']
-        new_object['intended_return_date'] = element['intended_return_date']
-        new_object['loan_status'] = element['status']
-        if (element['actual_return_date']) {
-            new_object['actual_return_date'] = element['actual_return_date']
-        }
-        else {
-            new_object['actual_return_date'] = null
-        }
         dashboard_objects.push(new_object)
     }
-    
     return res.json(dashboard_objects)
 }
 
+function get_item_details(item, new_object) {
+    new_object['item_name'] = item['item_name']
+    new_object['category'] = item['category']
+    new_object['description'] = item['description']
+    new_object['being_loaned'] = item['being_loaned']
+    new_object['loan_frequency'] = item['loan_frequency']
+    if (item['image_url']) {
+        new_object['image_url'] = item['image_url']
+    }
+}
+
+function get_loan_details(loan, new_object) {
+    new_object['loaner_id'] = loan['loaner_id']
+    new_object['loan_start_date'] = loan['loan_start_date']
+    new_object['intended_return_date'] = loan['intended_return_date']
+    new_object['loan_status'] = loan['status']
+    if (loan['actual_return_date']) {
+        new_object['actual_return_date'] = loan['actual_return_date']
+    }
+    else {
+        new_object['actual_return_date'] = null
+    }
+
+}
+
 module.exports= {
-  dashboardGetHandler
+  dashboardGetHandler,
 }

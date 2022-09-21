@@ -160,10 +160,7 @@ const loan_macbook = {
   "loan_start_date": "2022-08-18",
   "intended_return_date": "2022-08-25"
 }
-//create_users()
-//create_items(sunscreen)
-//create_loan(loan_sunscreen)
-//update_item("62fd8d5bfd46ebc631b3bc79")
+
 async function main(){
 
   await client.connect();
@@ -177,32 +174,33 @@ async function main(){
                 properties: {
                     loaner_id: {
                         bsonType: "objectId",
-                        description: "The Mongodb ID for the loaner user."
+                        description: "loaner id."
                     },
                     loanee_id: {
                         bsonType: "objectId",
-                        description: "The Mongodb ID for the loanee user."
+                        description: "loanee id."
                     },
                     item_id: {
                         bsonType: "objectId",
-                        description: "The Mongodb ID for the item."
+                        description: "item owner."
                     },
                     status: {
-                        enum: ["Current", "On Time Return", "Late Return", "Early Return"],
-                        description: "Loan status, can only be one of these enum values."
+                        bsonType: "string",
+                        enum: ["On Loan", "Overdue", "On Time Return", "Late Return", "Early Return"],
+                        description: "loan status."
                     },
                     loan_start_date: {
                         bsonType: "date",
-                        description: "Start date."
+                        description: "Loan start date."
                     },
                     intended_return_date: {
                         bsonType: "date",
-                        description: "Desired end date."
+                        description: "Intended return date."
                     },
                     actual_return_date: {
                       bsonType: "date",
-                      description: "Actual end date."
-                  }
+                      description: "Actual return date"
+                    }
                 }
             }
         }
@@ -212,5 +210,6 @@ async function main(){
   })
   });
 }
+
 main()
 
