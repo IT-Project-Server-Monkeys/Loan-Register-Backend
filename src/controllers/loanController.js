@@ -80,8 +80,8 @@ const  getAllLoans = async (req,res,next) => {
 
 const  getSpecificLoan = async (req,res,next) => {
   try{
-    loan_id = new mongoose.Types.ObjectId((req.query._id).toString())
-    const result = await loan.find({_id: loan_id}).lean()
+    loanId = new mongoose.Types.ObjectId((req.query._id).toString())
+    const result = await loan.find({_id: loanId}).lean()
     if (!result) {return res.status(400)}
     return res.json(result)
 } catch (err){
@@ -91,8 +91,8 @@ const  getSpecificLoan = async (req,res,next) => {
 
 const getAllLoansbyLoaner = async (req,res,next) => {
   try{
-    loaner_id = new mongoose.Types.ObjectId((req.query.loaner_id).toString())
-    const result = await loan.find({loaner_id: loaner_id}).lean()
+    loanerId = new mongoose.Types.ObjectId((req.query.loaner_id).toString())
+    const result = await loan.find({loaner_id: loanerId}).lean()
     if (!result) {return res.status(400)}
     return res.json(result)
 } catch (err){
@@ -102,9 +102,9 @@ const getAllLoansbyLoaner = async (req,res,next) => {
 
 const getAllLoansbyLoanerandStatus = async (req,res,next) => {
   try{
-    loaner_id = new mongoose.Types.ObjectId((req.query.loaner_id).toString())
+    loanerId = new mongoose.Types.ObjectId((req.query.loaner_id).toString())
     const status = getStatus(req)
-    const result = await loan.find({loaner_id: loaner_id, status:status}).lean()
+    const result = await loan.find({loaner_id: loanerId, status:status}).lean()
     if (!result) {return res.status(400)}
     return res.json(result)
 } catch (err){
@@ -114,8 +114,8 @@ const getAllLoansbyLoanerandStatus = async (req,res,next) => {
 
 const getAllLoansbyLoanee = async (req,res,next) => {
   try{
-    loanee_id = new mongoose.Types.ObjectId((req.query.loanee_id).toString())
-    const result = await loan.find({loanee_id: loanee_id}).lean()
+    loaneeId = new mongoose.Types.ObjectId((req.query.loanee_id).toString())
+    const result = await loan.find({loanee_id: loaneeId}).lean()
     if (!result) {return res.status(400)}
     return res.json(result)
 } catch (err){
@@ -125,9 +125,9 @@ const getAllLoansbyLoanee = async (req,res,next) => {
 
 const getAllLoansbyLoaneeandStatus = async (req,res,next) => {
   try{
-    loanee_id = new mongoose.Types.ObjectId((req.query.loanee_id).toString())
+    loaneeId = new mongoose.Types.ObjectId((req.query.loanee_id).toString())
     const status = getStatus(req)
-    const result = await loan.find({loanee_id: loanee_id, status:status}).lean()
+    const result = await loan.find({loanee_id: loaneeId, status:status}).lean()
     if (!result) {return res.status(400)}
     return res.json(result)
 } catch (err){
@@ -137,9 +137,9 @@ const getAllLoansbyLoaneeandStatus = async (req,res,next) => {
 
 const getAllLoansbyItemandStatus = async (req,res,next) => {
   try {
-    item_id = new mongoose.Types.ObjectId((req.query.item_id).toString())
+    itemId = new mongoose.Types.ObjectId((req.query.item_id).toString())
     const status = getStatus(req)
-    const result = await loan.find({item_id: item_id, status:status}).lean()
+    const result = await loan.find({item_id: itemId, status:status}).lean()
     if (!result) {return res.status(400)}
     return res.json(result)
   } catch (err) {
@@ -149,8 +149,8 @@ const getAllLoansbyItemandStatus = async (req,res,next) => {
 
 const getAllLoansbyItem = async (req,res,next) => {
   try{
-    item_id = new mongoose.Types.ObjectId((req.query.item_id).toString())
-    const result = await loan.find({item_id: item_id}).lean()
+    itemId = new mongoose.Types.ObjectId((req.query.item_id).toString())
+    const result = await loan.find({item_id: itemId}).lean()
     if (!result) {return res.status(400)}
     return res.json(result)
 } catch (err){
@@ -160,27 +160,27 @@ const getAllLoansbyItem = async (req,res,next) => {
 
 const createLoan = async (req,res,next) => {
   try{   
-    const loaner_id = new mongoose.Types.ObjectId(req.body.loaner_id);
-    const loanee_id = new mongoose.Types.ObjectId(req.body.loanee_id);
-    const item_id = new mongoose.Types.ObjectId(req.body.item_id);
-    const currentLoansExist = await checkCurrentLoans(item_id);
+    const loanerId = new mongoose.Types.ObjectId(req.body.loaner_id);
+    const loaneeId = new mongoose.Types.ObjectId(req.body.loanee_id);
+    const itemId = new mongoose.Types.ObjectId(req.body.item_id);
+    const currentLoansExist = await checkCurrentLoans(itemId);
     if (currentLoansExist) {return res.status(400)}
     const status = (req.body.status).toString()
-    const loan_start_date = new Date(req.body.loan_start_date.toString())
-    const intended_return_date = new Date(req.body.intended_return_date.toString())
-    const loan_result = await loan.create(
-        {loaner_id: loaner_id,
-        loanee_id: loanee_id,
-        item_id: item_id,
+    const loanStartDate = new Date(req.body.loan_start_date.toString())
+    const intendedReturnDate = new Date(req.body.intended_return_date.toString())
+    const loanResult = await loan.create(
+        {loaner_id: loanerId,
+        loanee_id: loaneeId,
+        item_id: itemId,
         status: status,
-        loan_start_date: loan_start_date,
-        intended_return_date: intended_return_date,
+        loan_start_date: loanStartDate,
+        intended_return_date: intendedReturnDate,
       }
     )
-    if (!loan_result) {return res.status(400)}
-    const item_result = await item.findOneAndUpdate({_id: item_id}, {$inc : {'loan_frequency' : 1}, $set : {'being_loaned': true}})
-    if (!item_result) {return res.status(400)}
-    return res.json(loan_result)
+    if (!loanResult) {return res.status(400)}
+    const itemResult = await item.findOneAndUpdate({_id: item_id}, {$inc : {'loan_frequency' : 1}, $set : {'being_loaned': true}})
+    if (!itemResult) {return res.status(400)}
+    return res.json(loanResult)
 } catch (err){
     return res.status(400)
   }
@@ -198,13 +198,10 @@ const editLoan = async (req,res,next) => {
     if (req.body.status) {
       update["status"] = req.body.status
       if (req.body.status.includes("Return")) {
-        console.log("Getting loan details")
-        const loan_details = await loan.find({_id: _id}).lean()
-        console.log(loan_details)
-        const item_id = loan_details[0]["item_id"]
-        console.log(item_id)
-        const item_result = await item.findOneAndUpdate({_id: item_id}, {$set : {'being_loaned': false}})
-        if (!item_result) {return res.status(400)}
+        const loanDetails = await loan.find({_id: _id}).lean()
+        const itemId = loanDetails[0]["item_id"]
+        const itemResult = await item.findOneAndUpdate({_id: itemId}, {$set : {'being_loaned': false}})
+        if (!itemResult) {return res.status(400)}
       }
     }
     if (req.body.loan_start_date) {
@@ -270,11 +267,11 @@ const getAllLoansbyStatus = async (req,res,next) => {
   }
 }
 
-const checkCurrentLoans = async (item_id) => {
+const checkCurrentLoans = async (itemId) => {
   try {
     const result = await loan.find({
       $and: [{$or: [{status: "On Loan"}, {status: "Overdue"}]},
-      {item_id: item_id}]}).lean()
+      {item_id: itemId}]}).lean()
     return (result.length>1)  
   }
   catch (err) {
@@ -284,10 +281,10 @@ const checkCurrentLoans = async (item_id) => {
 
 const getAllCurrentLoansbyLoaner = async (req,res,next) => {
   try{
-    loaner_id = new mongoose.Types.ObjectId((req.query.loaner_id).toString())
+    loanerId = new mongoose.Types.ObjectId((req.query.loaner_id).toString())
     const result = await loan.find({
       $and: [{$or: [{status: "On Loan"}, {status: "Overdue"}]},
-      {loaner_id: loaner_id}]}).lean()
+      {loaner_id: loanerId}]}).lean()
     if (!result) {return res.status(400)}
     return res.json(result)
 } catch (err){
@@ -297,10 +294,10 @@ const getAllCurrentLoansbyLoaner = async (req,res,next) => {
 
 const getAllCurrentLoansbyLoanee = async (req,res,next) => {
   try{
-    loanee_id = new mongoose.Types.ObjectId((req.query.loanee_id).toString())
+    loaneeId = new mongoose.Types.ObjectId((req.query.loanee_id).toString())
     const result = await loan.find({
       $and: [{$or: [{status: "On Loan"}, {status: "Overdue"}]},
-      {loanee_id: loanee_id}]}).lean()
+      {loanee_id: loaneeId}]}).lean()
     if (!result) {return res.status(400)}
     return res.json(result)
 } catch (err){
@@ -310,10 +307,10 @@ const getAllCurrentLoansbyLoanee = async (req,res,next) => {
 
 const getAllCurrentLoansbyItem = async (req,res,next) => {
   try{
-    item_id = new mongoose.Types.ObjectId((req.query.item_id).toString())
+    itemId = new mongoose.Types.ObjectId((req.query.item_id).toString())
     const result = await loan.find({
       $and: [{$or: [{status: "On Loan"}, {status: "Overdue"}]},
-      {item_id: item_id}]}).lean()
+      {item_id: itemId}]}).lean()
     if (!result) {return res.status(400)}
     return res.json(result)
 } catch (err){
