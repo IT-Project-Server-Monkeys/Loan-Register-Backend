@@ -101,22 +101,42 @@ const checkEmailAndPassword = async (req,res,next) => {
 
 const createUser = async (req,res,next) => {
   try{
+
+    
     const displayName = req.body.display_name
     const loginEmail = req.body.login_email
     const hashedPassword = req.body.hashed_password
     const itemCategories = ["Electronics", "Books", "Stationary", "University Resources", "Cash", "Miscellaneous", "Personal", "Clothing and Apparel", "Toiletries and Beauty"]
-    const newUser = await user.create(
+    var email_check = await user.find({login_email: loginEmail}).lean() 
+    if (email_check.length == 0){
+     
+        const newUser = await user.create(
         {display_name: displayName,
         login_email: loginEmail,
         hashed_password: hashedPassword,
         item_categories: itemCategories 
       }
     )
-    if (!newUser) {return res.status(400)}
+        return res.json(newUser)
+    }else{
+      return res.status(406).json({message: "This email is taken"})
+    }
+   
+
+   
+ 
   
-    return res.json(newUser)
+
 } catch (err){
-    return next(err)
+    if (err.message.includes("E11000","display_name")) {
+    return res.status(405).json({
+      message: "This display name is taken",
+      success: false,
+    });
+  
+  }
+
+    
   }
 }
 
@@ -173,6 +193,8 @@ const deleteUser = async (req, res, next) => {
     return next(err)
   }
 }
+
+
 
 
 module.exports = {
