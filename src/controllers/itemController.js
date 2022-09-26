@@ -133,7 +133,7 @@ const editItem = async (req,res,next) => {
     if (req.body.category) {
       update["category"] = req.body.category
     }
-    if (req.body.description) {
+    if (req.body.description != null) {
       update["description"] = req.body.description
     }
     if (req.body.item_owner) {
