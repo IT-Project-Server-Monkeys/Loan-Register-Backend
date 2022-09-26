@@ -80,7 +80,7 @@ const  getAllLoans = async (req,res,next) => {
 
 const  getSpecificLoan = async (req,res,next) => {
   try{
-    loanId = new mongoose.Types.ObjectId((req.query._id).toString())
+    const loanId = new mongoose.Types.ObjectId((req.query._id).toString())
     const result = await loan.find({_id: loanId}).lean()
     if (!result) {return res.status(400)}
     return res.json(result)
@@ -91,7 +91,7 @@ const  getSpecificLoan = async (req,res,next) => {
 
 const getAllLoansbyLoaner = async (req,res,next) => {
   try{
-    loanerId = new mongoose.Types.ObjectId((req.query.loaner_id).toString())
+    const loanerId = new mongoose.Types.ObjectId((req.query.loaner_id).toString())
     const result = await loan.find({loaner_id: loanerId}).lean()
     if (!result) {return res.status(400)}
     return res.json(result)
@@ -102,7 +102,7 @@ const getAllLoansbyLoaner = async (req,res,next) => {
 
 const getAllLoansbyLoanerandStatus = async (req,res,next) => {
   try{
-    loanerId = new mongoose.Types.ObjectId((req.query.loaner_id).toString())
+    const loanerId = new mongoose.Types.ObjectId((req.query.loaner_id).toString())
     const status = getStatus(req)
     const result = await loan.find({loaner_id: loanerId, status:status}).lean()
     if (!result) {return res.status(400)}
@@ -114,7 +114,7 @@ const getAllLoansbyLoanerandStatus = async (req,res,next) => {
 
 const getAllLoansbyLoanee = async (req,res,next) => {
   try{
-    loaneeId = new mongoose.Types.ObjectId((req.query.loanee_id).toString())
+    const loaneeId = new mongoose.Types.ObjectId((req.query.loanee_id).toString())
     const result = await loan.find({loanee_id: loaneeId}).lean()
     if (!result) {return res.status(400)}
     return res.json(result)
@@ -125,7 +125,7 @@ const getAllLoansbyLoanee = async (req,res,next) => {
 
 const getAllLoansbyLoaneeandStatus = async (req,res,next) => {
   try{
-    loaneeId = new mongoose.Types.ObjectId((req.query.loanee_id).toString())
+    const loaneeId = new mongoose.Types.ObjectId((req.query.loanee_id).toString())
     const status = getStatus(req)
     const result = await loan.find({loanee_id: loaneeId, status:status}).lean()
     if (!result) {return res.status(400)}
@@ -137,7 +137,7 @@ const getAllLoansbyLoaneeandStatus = async (req,res,next) => {
 
 const getAllLoansbyItemandStatus = async (req,res,next) => {
   try {
-    itemId = new mongoose.Types.ObjectId((req.query.item_id).toString())
+    const itemId = new mongoose.Types.ObjectId((req.query.item_id).toString())
     const status = getStatus(req)
     const result = await loan.find({item_id: itemId, status:status}).lean()
     if (!result) {return res.status(400)}
@@ -149,7 +149,7 @@ const getAllLoansbyItemandStatus = async (req,res,next) => {
 
 const getAllLoansbyItem = async (req,res,next) => {
   try{
-    itemId = new mongoose.Types.ObjectId((req.query.item_id).toString())
+    const itemId = new mongoose.Types.ObjectId((req.query.item_id).toString())
     const result = await loan.find({item_id: itemId}).lean()
     if (!result) {return res.status(400)}
     return res.json(result)
@@ -178,7 +178,7 @@ const createLoan = async (req,res,next) => {
       }
     )
     if (!loanResult) {return res.status(400)}
-    const itemResult = await item.findOneAndUpdate({_id: item_id}, {$inc : {'loan_frequency' : 1}, $set : {'being_loaned': true}})
+    const itemResult = await item.findOneAndUpdate({_id: itemId}, {$inc : {'loan_frequency' : 1}, $set : {'being_loaned': true}})
     if (!itemResult) {return res.status(400)}
     return res.json(loanResult)
 } catch (err){
