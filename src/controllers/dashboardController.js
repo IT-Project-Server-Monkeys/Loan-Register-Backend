@@ -24,7 +24,7 @@ const dashboardGetHandler = async (req,res,next) => {
         newObject['user_role'] = "loaner";
         newObject['item_categories'] = userCategories;
         newObject['item_id'] = element['_id']
-        getItemDetails(element, new_object)
+        getItemDetails(element, newObject)
 
         if (element['being_loaned'] == true) {
             itemId = new mongoose.Types.ObjectId(element["_id"]);
