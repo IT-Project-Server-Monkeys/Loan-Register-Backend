@@ -45,7 +45,7 @@ const  getAllItems = async (req,res,next) => {
     return next(err)
   }
      
-}
+} 
 
 const  getSpecificItem = async (req,res,next) => {
   try{
