@@ -101,22 +101,42 @@ const checkEmailAndPassword = async (req,res,next) => {
 
 const createUser = async (req,res,next) => {
   try{
-    const display_name = req.body.display_name
-    const login_email = req.body.login_email
-    const hashed_password = req.body.hashed_password
-    const item_categories = ["Electronics", "Books", "Stationary", "University Resources", "Cash", "Miscellaneous", "Personal", "Clothing and Apparel", "Toiletries and Beauty"]
-    const new_user = await user.create(
-        {display_name: display_name,
-        login_email: login_email,
-        hashed_password: hashed_password,
-        item_categories: item_categories 
+
+    
+    const displayName = req.body.display_name
+    const loginEmail = req.body.login_email
+    const hashedPassword = req.body.hashed_password
+    const itemCategories = ["Electronics", "Books", "Stationary", "University Resources", "Cash", "Miscellaneous", "Personal", "Clothing and Apparel", "Toiletries and Beauty"]
+    var email_check = await user.find({login_email: loginEmail}).lean() 
+    if (email_check.length == 0){
+     
+        const newUser = await user.create(
+        {display_name: displayName,
+        login_email: loginEmail,
+        hashed_password: hashedPassword,
+        item_categories: itemCategories 
       }
     )
-    if (!new_user) {return res.status(400)}
+        return res.json(newUser)
+    }else{
+      return res.status(406).json({message: "This email is taken"})
+    }
+   
+
+   
+ 
   
-    return res.json(new_user)
+
 } catch (err){
-    return next(err)
+    if (err.message.includes("E11000","display_name")) {
+    return res.status(405).json({
+      message: "This display name is taken",
+      success: false,
+    });
+  
+  }
+
+    
   }
 }
 
@@ -159,9 +179,9 @@ const deleteUser = async (req, res, next) => {
   try {
     const _id = new mongoose.Types.ObjectId(req.query._id);
     //have to implement check if user own any items and dont appear in any loan
-    const item_associated = await item.find({item_owner: _id}).lean();
-    const loan_associated = await loan.find({$or:[{loaner_id: _id},{loanee_id: _id}]}).lean();
-    if (!item_associated || !loan_associated){
+    const itemAssociated = await item.find({item_owner: _id}).lean();
+    const loanAssociated = await loan.find({$or:[{loaner_id: _id},{loanee_id: _id}]}).lean();
+    if (!itemAssociated || !loanAssociated){
       const result = await user.deleteOne({_id: _id});
       if (!result) {return res.status(400)}
       return res.json(result)
@@ -173,6 +193,8 @@ const deleteUser = async (req, res, next) => {
     return next(err)
   }
 }
+
+
 
 
 module.exports = {

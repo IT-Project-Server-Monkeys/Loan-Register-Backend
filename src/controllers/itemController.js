@@ -45,7 +45,7 @@ const  getAllItems = async (req,res,next) => {
     return next(err)
   }
      
-}
+} 
 
 const  getSpecificItem = async (req,res,next) => {
   try{
@@ -82,9 +82,9 @@ const getAllItemsbyCategory = async (req,res,next) => {
 
 const getAllItemByItemOwner = async (req,res,next) => {
   try{
-    item_owner = new mongoose.Types.ObjectId((req.query.item_owner).toString())
+    itemOwner = new mongoose.Types.ObjectId((req.query.item_owner).toString())
    
-    const result = await item.find({item_owner: item_owner }).lean()
+    const result = await item.find({item_owner: itemOwner }).lean()
     if (!result) {return res.status(400)}
     return res.json(result)
 } catch (err){
@@ -95,26 +95,25 @@ const getAllItemByItemOwner = async (req,res,next) => {
 
 const createItem = async (req,res,next) => {
   try{
-    const item_name =req.body.item_name;
+    const itemName =req.body.item_name;
     const category =req.body.category;
     const description = req.body.description;
-    const item_owner = new mongoose.Types.ObjectId(req.body.item_owner);
-    const item_object = {
-      item_name: item_name,
+    const itemOwner = new mongoose.Types.ObjectId(req.body.item_owner);
+    itemObject = {item_name: itemName,
       category: category,
       description: description,
-      item_owner: item_owner,
+      item_owner: itemOwner,
       being_loaned: false,
       loan_frequency: 0
     }
     if (req.body.image_enc) {
-      image_url = await imageUpload(req.body.image_enc.toString());
-      item_object["image_url"] = image_url
+      imageUrl = await imageUpload(req.body.image_enc.toString());
+      itemObject["image_url"] = imageUrl
     }
-    const item_result = await item.create(item_object)
+    const itemResult = await item.create(itemObject)
   
-    if (!item_result) {return res.status(400)}
-    return res.json(item_result)
+    if (!itemResult) {return res.status(400)}
+    return res.json(itemResult)
   } catch (err){
     return next(err)
   }
@@ -161,11 +160,11 @@ const editItem = async (req,res,next) => {
 const deleteItem = async (req, res, next) => {
   try {
     const _id = new mongoose.Types.ObjectId(req.query._id);
-    const loan_associated = await loan.find({item_id:_id}).lean();
-    if (!loan_associated){
-      const delete_result = await item.deleteOne({_id: _id});
-    if (!delete_result) {return res.status(400)}
-    return res.json(delete_result)
+    const loanAssociated = await loan.find({item_id:_id}).lean();
+    if (!loanAssociated){
+      const deleteResult = await item.deleteOne({_id: _id});
+    if (!deleteResult) {return res.status(400)}
+    return res.json(deleteResult)
 
     }else{
       return res.status(400).json({message: "Item is currently being loaned and cannot be deleted"})
@@ -178,8 +177,8 @@ const deleteItem = async (req, res, next) => {
   }
 }
 
-async function imageUpload (image_string) {
-  const buf = Buffer.from(image_string, 'base64')
+async function imageUpload (imageString) {
+  const buf = Buffer.from(imageString, 'base64')
   const arweave = Arweave.init({
       host: 'arweave.net',
       port: 443,
