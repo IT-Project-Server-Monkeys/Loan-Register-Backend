@@ -22,6 +22,10 @@ const itemGetHandler = async (req,res,next) => {
     getAllItemByItemOwner(req,res,next);
     
   }
+
+  else if (req.query.item_owner && req.query.category) {
+    getAllItemByCategoryAndUser(req,res,next);
+  }
 }
 
 const itemPostHandler = async(req,res,next) => {
@@ -92,6 +96,16 @@ const getAllItemByItemOwner = async (req,res,next) => {
   }
 }
 
+const getAllItemByCategoryAndUser = async(req,res,next) => {
+  try{
+    itemOwner = new mongoose.Types.ObjectId((req.query.item_owner).toString())
+    const result = await item.find({item_owner: itemOwner, category: req.query.category }).lean()
+    if (!result) {return res.status(400)}
+    return res.json(result)
+  } catch (err){
+    return next(err)
+  }
+}
 
 const createItem = async (req,res,next) => {
   try{
