@@ -40,7 +40,7 @@ const dashboardGetHandler = async (req,res,next) => {
             newObject['loanee_name'] = null
             newObject['loan_start_date'] = null
             newObject['intended_return_date'] = null
-            newObject['loan_status'] = null
+            newObject['loan_status'] = "Available"
             newObject['actual_return_date'] = null
         }     
         dashboardObjects.push(newObject)
