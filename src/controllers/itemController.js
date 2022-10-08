@@ -118,6 +118,7 @@ const createItem = async (req,res,next) => {
       description: description,
       item_owner: itemOwner,
       being_loaned: "Available",
+      visible: true,
       loan_frequency: 0
     }
     if (req.body.image_enc) {
@@ -157,6 +158,11 @@ const editItem = async (req,res,next) => {
     if (req.body.being_loaned) {
       update["being_loaned"] = req.body.being_loaned
     }
+
+    if (req.body.visible) {
+      update["visible"] = req.body.visible
+    }
+      
     if (req.body.image_enc) {
       image_url = await imageUpload(req.body.image_enc.toString());
       update["image_url"] = image_url
