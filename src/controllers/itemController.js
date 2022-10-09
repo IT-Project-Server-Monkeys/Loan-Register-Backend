@@ -13,6 +13,11 @@ const itemGetHandler = async (req,res,next) => {
   else if (req.query._id) {
     getSpecificItem(req, res, next);
   }
+
+  else if (req.query.item_owner && req.query.category) {
+    getAllItemByCategoryAndUser(req,res,next);
+  }
+  
   else if (req.query.category) {
    
     getAllItemsbyCategory(req, res, next);
@@ -21,10 +26,6 @@ const itemGetHandler = async (req,res,next) => {
   else if (req.query.item_owner) {
     getAllItemByItemOwner(req,res,next);
     
-  }
-
-  else if (req.query.item_owner && req.query.category) {
-    getAllItemByCategoryAndUser(req,res,next);
   }
 }
 
