@@ -157,7 +157,7 @@ const editItem = async (req,res,next) => {
       update["item_owner"] = new mongoose.Types.ObjectId(req.body.item_owner)
     }
 
-    if (req.body.being_loaned) {
+    if (req.body.visible != null) {
       update["being_loaned"] = req.body.being_loaned
     }
 
