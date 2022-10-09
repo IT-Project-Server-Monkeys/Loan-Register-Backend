@@ -161,7 +161,7 @@ const editItem = async (req,res,next) => {
       update["being_loaned"] = req.body.being_loaned
     }
 
-    if (req.body.visible) {
+    if (req.body.visible != null) {
       update["visible"] = req.body.visible
     }
       
