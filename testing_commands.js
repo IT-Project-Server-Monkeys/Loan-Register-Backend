@@ -161,45 +161,59 @@ const loan_macbook = {
   "intended_return_date": "2022-08-25"
 }
 
+const itemSchema = new mongoose.Schema({
+  item_name: { type: String , required: true},
+  category:{ type: String, required: true},
+  description:{type: String, required: true},
+  item_owner: {type: mongoose.Schema.Types.ObjectId,required:true},
+  being_loaned: {type: Boolean,required:true},
+  loan_frequency: {type: Number,required:true},
+  visible: {type: Boolean, required:true},
+  image_url: {type: String, required: false}
+})
+
 async function main(){
 
   await client.connect();
   MongoClient.connect(uri, function(err, db) {
       if (err) throw err;
-      db.db("ProjectDatabase").command( { collMod: "loans",
+      db.db("ProjectDatabase").command( { collMod: "items",
           validator: {
             $jsonSchema: {
                 bsonType: "object",
-                required: ["loaner_id", "loanee_id", "item_id", "status", "loan_start_date", "intended_return_date"],
+                required: ["item_name", "category", "description", "item_owner", "being_loaned", "loan_frequency", "visible"],
                 properties: {
-                    loaner_id: {
-                        bsonType: "objectId",
-                        description: "loaner id."
-                    },
-                    loanee_id: {
-                        bsonType: "objectId",
-                        description: "loanee id."
-                    },
-                    item_id: {
-                        bsonType: "objectId",
-                        description: "item owner."
-                    },
-                    status: {
+                  item_name: {
                         bsonType: "string",
-                        enum: ["On Loan", "Overdue", "On Time Return", "Late Return", "Early Return"],
-                        description: "loan status."
+                        description: "item_name"
                     },
-                    loan_start_date: {
-                        bsonType: "date",
-                        description: "Loan start date."
+                    category: {
+                        bsonType: "string",
+                        description: "category"
                     },
-                    intended_return_date: {
-                        bsonType: "date",
-                        description: "Intended return date."
+                    description: {
+                        bsonType: "string",
+                        description: "description"
                     },
-                    actual_return_date: {
-                      bsonType: "date",
-                      description: "Actual return date"
+                    item_owner: {
+                        bsonType: "objectId",
+                        description: "item_owner"
+                    },
+                    being_loaned: {
+                        bsonType: "bool",
+                        description: "being_loaned"
+                    },
+                    loan_frequency: {
+                        bsonType: "int",
+                        description: "loan_frequency"
+                    },
+                    visible: {
+                      bsonType: "bool",
+                      description: "visible"
+                    },
+                    image_url: {
+                      bsonType: "string",
+                      description: "image_url"
                     }
                 }
             }
