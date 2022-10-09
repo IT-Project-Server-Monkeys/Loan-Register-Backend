@@ -117,8 +117,9 @@ const createItem = async (req,res,next) => {
       category: category,
       description: description,
       item_owner: itemOwner,
-      being_loaned: "Available",
+      being_loaned: false,
       visible: true,
+      
       loan_frequency: 0
     }
     if (req.body.image_enc) {
