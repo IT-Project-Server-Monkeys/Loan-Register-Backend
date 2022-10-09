@@ -70,6 +70,7 @@ function getItemDetails(item, newObject) {
     if (item['image_url']) {
         newObject['image_url'] = item['image_url']
     }
+    newObject['visible'] = item['visible']
 }
 
 function getLoanDetails(loan, newObject) {

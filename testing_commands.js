@@ -161,23 +161,12 @@ const loan_macbook = {
   "intended_return_date": "2022-08-25"
 }
 
-const itemSchema = new mongoose.Schema({
-  item_name: { type: String , required: true},
-  category:{ type: String, required: true},
-  description:{type: String, required: true},
-  item_owner: {type: mongoose.Schema.Types.ObjectId,required:true},
-  being_loaned: {type: Boolean,required:true},
-  loan_frequency: {type: Number,required:true},
-  visible: {type: Boolean, required:true},
-  image_url: {type: String, required: false}
-})
-
 async function main(){
 
   await client.connect();
   MongoClient.connect(uri, function(err, db) {
       if (err) throw err;
-      db.db("ProjectDatabase").command( { collMod: "items",
+      db.db("ProjectDatabaseTesting").command( { collMod: "items",
           validator: {
             $jsonSchema: {
                 bsonType: "object",
