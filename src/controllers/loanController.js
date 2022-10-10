@@ -171,7 +171,7 @@ const createLoan = async (req,res,next) => {
     const intendedReturnDate = new Date(req.body.intended_return_date.toString())
       
     const item = await item.find({_id: itemId}).lean()
-    const loanee = awiat user.find({_id: loaneeId}).lean()
+    const loanee = await user.find({_id: loaneeId}).lean()
     
     const loanResult = await loan.create(
         {loaner_id: loanerId,
