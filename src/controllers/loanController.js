@@ -168,6 +168,8 @@ const createLoan = async (req,res,next) => {
     const status = (req.body.status).toString()
     const loanStartDate = new Date(req.body.loan_start_date.toString())
     const intendedReturnDate = new Date(req.body.intended_return_date.toString())
+    const loaneeName = (req.body.loanee_name).toString()
+    const itemImage = (req.body.item_image).toString()
     
     const loanResult = await loan.create(
         {loaner_id: loanerId,
@@ -176,6 +178,8 @@ const createLoan = async (req,res,next) => {
         status: status,
         loan_start_date: loanStartDate,
         intended_return_date: intendedReturnDate,
+        loanee_name: loaneeName,
+        item_image: itemImage
       }
     )
     if (!loanResult) {return res.status(400)}
