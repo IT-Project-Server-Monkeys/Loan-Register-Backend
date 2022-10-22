@@ -201,7 +201,7 @@ const editLoan = async (req,res,next) => {
       update["loanee_id"] = new mongoose.Types.ObjectId(req.body.loanee_id)
     }
     if (req.body.loanee_name) {
-      update["loanee_name"] = new mongoose.Types.ObjectId(req.body.loanee_name)
+      update["loanee_name"] = req.body.loanee_name;
     }
     if (req.body.status) {
       update["status"] = req.body.status
