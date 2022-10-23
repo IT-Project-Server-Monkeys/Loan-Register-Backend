@@ -8,7 +8,7 @@ const mongoose = require('mongoose')
 // Connect to mongo database using the MONGO_URL environment variable
 // Locally, MONGO_URL will be loaded by dotenv from .env
 mongoose
-    .connect(process.env.MONGO_URL || 'mongodb://127.0.0.1', {
+    .connect(process.env.MONGO_URL || 'mongodb://localhost', {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         dbName: 'ProjectDatabaseTesting',
@@ -24,7 +24,7 @@ const db = mongoose.connection.on('error', (err) => {
 
 // Log to console once the database is open
 db.once('open', async () => {
-    console.log(`Mongo connection started on ${db.host}:${db.port}`)
+    console.log('Mongo connection started on ${db.host}:${db.port}')
 })
 
 
@@ -34,7 +34,7 @@ require('./userModel')
 
 
 const mongooseClient = mongoose
-    .connect(process.env.MONGO_URL || 'mongodb://127.0.0.1', {
+    .connect(process.env.MONGO_URL || 'mongodb://localhost', {
         dbName: 'ProjectDatabaseTesting',
     })
     .then((m) => m.connection.getClient())

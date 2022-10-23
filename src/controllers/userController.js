@@ -24,7 +24,6 @@ const userGetHandler = async (req,res,next) => {
 }
 
 const userPostHandler = async(req,res,next) => {
-  console.log("Post request received.")
   createUser(req, res, next);
 }
 
@@ -40,7 +39,8 @@ const userDeleteHandler = async(req,res,next) => {
 const  getAllUsers = async (req,res,next) => {
   try{
       const result = await user.find().lean()
-      return res.json(result)
+      if ((result.length) > 0) {return res.json(result)}
+      else {res.status(400)}
   } catch (err){
     return next(err)
   }
@@ -101,6 +101,7 @@ const checkEmailAndPassword = async (req,res,next) => {
 
 const createUser = async (req,res,next) => {
   try{
+
     
     const displayName = req.body.display_name
     const loginEmail = req.body.login_email

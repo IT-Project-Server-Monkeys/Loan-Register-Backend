@@ -13,6 +13,11 @@ const itemGetHandler = async (req,res,next) => {
   else if (req.query._id) {
     getSpecificItem(req, res, next);
   }
+
+  else if (req.query.item_owner && req.query.category) {
+    getAllItemByCategoryAndUser(req,res,next);
+  }
+  
   else if (req.query.category) {
    
     getAllItemsbyCategory(req, res, next);
@@ -21,10 +26,6 @@ const itemGetHandler = async (req,res,next) => {
   else if (req.query.item_owner) {
     getAllItemByItemOwner(req,res,next);
     
-  }
-
-  else if (req.query.item_owner && req.query.category) {
-    getAllItemByCategoryAndUser(req,res,next);
   }
 }
 
@@ -43,7 +44,8 @@ const itemDeleteHandler = async(req,res,next) => {
 const  getAllItems = async (req,res,next) => {
   try{
       const result = await item.find().lean()
-     return res.json(result)
+      if ((result.length) > 0) {return res.json(result)}
+      else {res.status(400)}
   } catch (err){
     return next(err)
   }
@@ -117,6 +119,8 @@ const createItem = async (req,res,next) => {
       description: description,
       item_owner: itemOwner,
       being_loaned: false,
+      visible: true,
+      
       loan_frequency: 0
     }
     if (req.body.image_enc) {
@@ -153,9 +157,14 @@ const editItem = async (req,res,next) => {
       update["item_owner"] = new mongoose.Types.ObjectId(req.body.item_owner)
     }
 
-    if (req.body.being_loaned) {
+    if (req.body.visible != null) {
       update["being_loaned"] = req.body.being_loaned
     }
+
+    if (req.body.visible != null) {
+      update["visible"] = req.body.visible
+    }
+      
     if (req.body.image_enc) {
       image_url = await imageUpload(req.body.image_enc.toString());
       update["image_url"] = image_url
