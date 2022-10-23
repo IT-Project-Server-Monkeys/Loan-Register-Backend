@@ -195,11 +195,21 @@ validator: {
           actual_return_date: {
             bsonType: "date",
             description: "Actual return date"
+          },
+          loanee_name: {
+            bsonType: "string",
+            description: "name"
+          },
+          item_image: {
+            bsonType: "string",
+            description: "item_image"
           }
+
       }
   }
 }
 }
+
 
 user_command = { collMod: "users",
 validator: {
@@ -259,11 +269,15 @@ validator: {
         loan_frequency: {
           bsonType: "int",
           description: "loan_frequency"
-      },
-      image_url: {
-        bsonType: "string",
-        description: "image_url"
-    }
+        },
+        image_url: {
+          bsonType: "string",
+          description: "image_url"
+        },
+        visible: {
+          bsonType: "bool",
+          description: "visible"
+        }
       }
   }
 }
@@ -275,10 +289,16 @@ async function main(){
   await client.connect();
   MongoClient.connect(uri, function(err, db) {
       if (err) throw err;
-      db.db("ProjectDatabaseTesting").command(user_command, function(err, res) {
+      db.db("ProjectDatabaseProduction").command(user_command, function(err, res) {
       if (err) throw err;
-      console.log("Collection created!"); 
-  })
+      console.log("Collection created!"); })
+      db.db("ProjectDatabaseProduction").command(loan_command, function(err, res) {
+        if (err) throw err;
+        console.log("Collection created!"); })
+      db.db("ProjectDatabaseProduction").command(item_command, function(err, res) {
+        if (err) throw err;
+        console.log("Collection created!"); })
+      return;
   });
 }
 
