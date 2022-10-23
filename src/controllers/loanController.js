@@ -70,12 +70,10 @@ const loanDeleteHandler = async (req, res, next) => {
 const  getAllLoans = async (req,res,next) => {
   try{
       const result = await loan.find().lean()
-      if ((result.length) > 0) {return res.json(result)}
-      else {res.status(400)}
+      return res.json(result)
   } catch (err){
     return res.status(400)
   }
-     
 }
 
 const  getSpecificLoan = async (req,res,next) => {
@@ -168,9 +166,6 @@ const createLoan = async (req,res,next) => {
     const status = (req.body.status).toString()
     const loanStartDate = new Date(req.body.loan_start_date.toString())
     const intendedReturnDate = new Date(req.body.intended_return_date.toString())
-    const loaneeName = req.body.loanee_name ? (req.body.loanee_name).toString() : ''
-    const itemImage = req.body.item_image ? (req.body.item_image).toString() : ''
-    
     const loanResult = await loan.create(
         {loaner_id: loanerId,
         loanee_id: loaneeId,
@@ -178,8 +173,6 @@ const createLoan = async (req,res,next) => {
         status: status,
         loan_start_date: loanStartDate,
         intended_return_date: intendedReturnDate,
-        loanee_name: loaneeName,
-        item_image: itemImage
       }
     )
     if (!loanResult) {return res.status(400)}
@@ -199,9 +192,6 @@ const editLoan = async (req,res,next) => {
     
     if (req.body.loanee_id) {
       update["loanee_id"] = new mongoose.Types.ObjectId(req.body.loanee_id)
-    }
-    if (req.body.loanee_name) {
-      update["loanee_name"] = req.body.loanee_name;
     }
     if (req.body.status) {
       update["status"] = req.body.status
