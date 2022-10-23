@@ -18,6 +18,7 @@ app.get("/", (req, res) => {
 });
 require('./src/models')
 
+
 app.listen(PORT, function() {
     console.log(`Listening on Port ${PORT}`);
 });
