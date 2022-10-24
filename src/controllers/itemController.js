@@ -112,7 +112,7 @@ const createItem = async (req,res,next) => {
   try{
     const itemName =req.body.item_name;
     const category =req.body.category;
-    const description = req.body.description;
+    const description = req.body.description != null ? req.body.description : "";
     const itemOwner = new mongoose.Types.ObjectId(req.body.item_owner);
     itemObject = {item_name: itemName,
       category: category,
