@@ -170,7 +170,7 @@ async function main(){
           validator: {
             $jsonSchema: {
                 bsonType: "object",
-                required: ["item_name", "category", "description", "item_owner", "being_loaned", "loan_frequency", "visible"],
+                required: ["item_name", "category","item_owner", "being_loaned", "loan_frequency", "visible"],
                 properties: {
                   item_name: {
                         bsonType: "string",
