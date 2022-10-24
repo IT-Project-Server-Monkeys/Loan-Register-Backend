@@ -5,6 +5,5 @@ const schema = new mongoose.Schema({
     hashed_password: {type: String, required: true},
     item_categories:{ type: [String], required: true}
 });
-
 const user = mongoose.model('users', schema);
 module.exports = user;

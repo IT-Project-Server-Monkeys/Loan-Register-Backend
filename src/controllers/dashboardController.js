@@ -64,6 +64,7 @@ const dashboardGetHandler = async (req,res,next) => {
 function getItemDetails(item, newObject) {
     newObject['item_name'] = item['item_name']
     newObject['category'] = item['category']
+    newObject['item_owner'] = item['item_owner']
     newObject['description'] = item['description']
     newObject['being_loaned'] = item['being_loaned']
     newObject['loan_frequency'] = item['loan_frequency']
