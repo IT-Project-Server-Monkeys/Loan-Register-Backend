@@ -144,6 +144,13 @@ const editItem = async (req,res,next) => {
     const query = {_id: _id}
     const update = {}
     
+   
+
+    const result_check = await item.findById(_id).lean()
+    if (!result_check) {
+      
+      return res.status(400).json({message: "Item does not exist"})}
+    
     if (req.body.item_name) {
       update["item_name"] = req.body.item_name
     }
@@ -175,7 +182,13 @@ const editItem = async (req,res,next) => {
     return res.json(result)
   }
   catch (err){
-    return next(err)
+    if (err.message.includes("Argument")){
+      return res.status(400).json({
+        message: "Invalid id"
+        
+      });
+    
+    }
   }
 }
 
