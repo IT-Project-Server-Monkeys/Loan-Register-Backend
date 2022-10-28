@@ -11,7 +11,7 @@ mongoose
     .connect(process.env.MONGO_URL || 'mongodb://localhost', {
         useNewUrlParser: true,
         useUnifiedTopology: true,
-        dbName: 'ProjectDatabaseTesting',
+        dbName: 'ProjectDatabase',
     })
     .then(() => console.log('connected'))
     .catch((err) => console.log('This is the mongoose error: ' + err))
@@ -35,7 +35,7 @@ require('./userModel')
 
 const mongooseClient = mongoose
     .connect(process.env.MONGO_URL || 'mongodb://localhost', {
-        dbName: 'ProjectDatabaseTesting',
+        dbName: 'ProjectDatabase',
     })
     .then((m) => m.connection.getClient())
 module.exports = mongooseClient
