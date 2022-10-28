@@ -8,15 +8,21 @@ const dashboardGetHandler = async (req,res,next) => {
 
     const userCategories = (await user.find({_id: userId}).lean())[0]['item_categories']
 
-    const ownedItems = await item.find({item_owner: userId}).lean()
 
-    // now, need to get all loans to user, and get the items from them. Then, need to get unique list. 
-    
+    const loanedItems = await loan.find({loaner_id:userId, status:"On Loan"}).lean()
+    const borrowedItems =  await loan.find({loanee_id:userId,status: "On Loan"}).lean()
+
+    const total = loanedItems.concat(borrowedItems)
+    console.log(total)
+    await fixOverDues(total)
+    const ownedItems = await item.find({item_owner: userId}).lean()    
     const allLoanItems = await loan.find({loanee_id:userId}).sort({loan_start_date: -1}).lean()
     const uniqueItems = [...new Set (allLoanItems.map(element => {return element['item_id'].toString()}))];
     var recipientLoans = []
     uniqueItems.forEach( item => recipientLoans.push(allLoanItems.find(loan => loan['item_id'].toString() == item)))
 
+
+    // check recipient loans to make sure they're the correct time!
 
     var dashboardObjects = []
     for (const element of ownedItems) {
@@ -63,6 +69,7 @@ const dashboardGetHandler = async (req,res,next) => {
 
 function getItemDetails(item, newObject) {
     newObject['item_name'] = item['item_name']
+    newObject['item_owner'] = item['item_owner']
     newObject['category'] = item['category']
     newObject['description'] = item['description']
     newObject['being_loaned'] = item['being_loaned']
@@ -85,6 +92,29 @@ function getLoanDetails(loan, newObject) {
         newObject['actual_return_date'] = null
     }
 
+}
+function checkOverdue(loan) {
+    const return_date = loan['intended_return_date']
+    const todays_date = new Date()
+    console.log(todays_date)
+    const diffTime = (todays_date - return_date);
+    console.log(diffTime)
+    return diffTime > 0;
+}
+
+async function fixOverDues(loans) {
+    for (const element of loans) {
+        if (checkOverdue(element)) {
+            console.log("Overdue! Fix")
+            try {
+                const result = await loan.findOneAndUpdate({_id: element['_id']}, {status: "Overdue"}, {returnDocument:'after'});
+                console.log("Fixed!")
+            }
+            catch {
+                console.log("Did not update successfully...")
+            }
+        }
+    }
 }
 
 module.exports= {

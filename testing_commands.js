@@ -161,6 +161,7 @@ const loan_macbook = {
   "intended_return_date": "2022-08-25"
 }
 
+<<<<<<< HEAD
 loan_command = { collMod: "loans",
 validator: {
   $jsonSchema: {
@@ -284,12 +285,59 @@ validator: {
 }
 
 
+=======
+>>>>>>> develop
 async function main(){
 
   await client.connect();
   MongoClient.connect(uri, function(err, db) {
       if (err) throw err;
+<<<<<<< HEAD
       db.db("ProjectDatabaseProduction").command(user_command, function(err, res) {
+=======
+      db.db("ProjectDatabaseTesting").command( { collMod: "items",
+          validator: {
+            $jsonSchema: {
+                bsonType: "object",
+                required: ["item_name", "category","item_owner", "being_loaned", "loan_frequency", "visible"],
+                properties: {
+                  item_name: {
+                        bsonType: "string",
+                        description: "item_name"
+                    },
+                    category: {
+                        bsonType: "string",
+                        description: "category"
+                    },
+                    description: {
+                        bsonType: "string",
+                        description: "description"
+                    },
+                    item_owner: {
+                        bsonType: "objectId",
+                        description: "item_owner"
+                    },
+                    being_loaned: {
+                        bsonType: "bool",
+                        description: "being_loaned"
+                    },
+                    loan_frequency: {
+                        bsonType: "int",
+                        description: "loan_frequency"
+                    },
+                    visible: {
+                      bsonType: "bool",
+                      description: "visible"
+                    },
+                    image_url: {
+                      bsonType: "string",
+                      description: "image_url"
+                    }
+                }
+            }
+        }
+      }, function(err, res) {
+>>>>>>> develop
       if (err) throw err;
       console.log("Collection created!"); })
       db.db("ProjectDatabaseProduction").command(loan_command, function(err, res) {
