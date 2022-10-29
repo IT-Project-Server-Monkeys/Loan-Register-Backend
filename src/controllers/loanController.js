@@ -222,6 +222,9 @@ const editLoan = async (req,res,next) => {
     if (req.body.actual_return_date) {
       update["actual_return_date"] = new Date(req.body.actual_return_date)
     }
+    if (req.body.item_image) {
+      update['item_image'] = req.body.item_image
+    }
 
     const result = await loan.findOneAndUpdate(query, update, {returnDocument:'after'});
     if (!result) {return res.status(400)}
