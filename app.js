@@ -35,7 +35,7 @@ app.use('/items',itemRouter)
 
 const dashboardRouter = require("./src/routes/dashboardRouter")
 app.use('/dashboard', dashboardRouter)
-let all_refreshTokens = [] 
+
 
 require("dotenv").config()  
 const user = require("./src/models/userModel");
@@ -69,46 +69,24 @@ app.post("/login", async(req,res) => {
 
 
 
-function generateAccessToken(user) {
-    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: "15m"}) 
-  }
-    
-  
-  function generateRefreshToken(user) {
-  const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {expiresIn: "20m"})
-    
-    
-  
-  return refreshToken }
+app.get("/", (req, res) => {
+    res.send("Authen server testing");
+});
 
 // call this after every 15mins
 app.post("/refreshToken", (req,res) => {
-    all_refreshTokens = req.body.all_refreshTokens
-   
-   //remove the old refreshToken from the refreshTokens list
-    if (!all_refreshTokens.includes(req.body.token)) res.status(400).send("Refresh Token Invalid")
-    const result = {}
-   
-    all_refreshTokens
-    = all_refreshTokens.filter( (c) => c != req.body.token)
-    
+    if (!req.body.all_refreshTokens.includes(req.body.token)) res.status(400).send("Refresh Token Invalid")
+    req.body.all_refreshTokens = req.body.all_refreshTokens.filter( (c) => c != req.body.token)
+    //remove the old refreshToken from the refreshTokens list
     const accessToken = generateAccessToken ({user: req.body.login_email})
     const refreshToken = generateRefreshToken ({user: req.body.login_email})
-    all_refreshTokens.push(refreshToken)
-    result.accessToken = accessToken
-    result.refreshToken = refreshToken
-    result.all_refreshTokens = all_refreshTokens
     //generate new accessToken and refreshTokens
-   
-    res.json (result)
+    res.json ({accessToken: accessToken, refreshToken: refreshToken, all_refreshTokens: req.body.all_refreshTokens})
     
     })
 
 app.delete("/logout", (req,res)=>{
-        console.log(req.body.all_refreshTokens)
-        req.body.all_refreshTokens = []
-        
-        console.log(req.body.all_refreshTokens)
+        req.body.all_refreshTokens = req.body.all_refreshTokens.filter( (c) => c != req.body.token)
         //remove the old refreshToken from the refreshTokens list
         res.status(204).send("Logged out!")
         })
