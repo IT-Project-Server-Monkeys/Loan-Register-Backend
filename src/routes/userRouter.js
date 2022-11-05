@@ -9,5 +9,4 @@ userRouter.post('/', userController.userPostHandler);
 userRouter.put('/', userController.userPutHandler);
 userRouter.delete('/', userController.userDeleteHandler);
 
-
-module.exports = userRouter
+module.exports = userRouter;
