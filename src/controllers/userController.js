@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 
 const bodyParser = require('body-parser');
 const user = require("../models/userModel");
-const refreshTokens = []
+
 const userGetHandler = async (req,res,next) => {
   if (req.query.all && req.query.all.toString() == 1) {
     getAllUsers(req, res, next);
@@ -46,7 +46,7 @@ const  getAllUsers = async (req,res,next) => {
   }
      
 }
-const jwt = require("jsonwebtoken")
+
 
 
 const  getSpecificUser = async (req,res,next) => {
@@ -54,30 +54,14 @@ const  getSpecificUser = async (req,res,next) => {
   
     const result = await user.findById(req.query.id).lean()
     if (!result) {return res.status(400)}
-    const accessToken = generateAccessToken ({user: result.login_email})
-    const refreshTokens = generateRefreshToken ({user: result.login_email})
-    result.accessToken = accessToken
-    result.refreshToken = refreshTokens[refreshTokens.length - 1]
-    result.all_refreshToken = refreshTokens
-   
-   
+     
     
     return res.json(result)
 } catch (err){
     return next(err)
   }
 }
-function generateAccessToken(user) {
-  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: "15m"}) 
-}
-  
 
-function generateRefreshToken(user) {
-const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {expiresIn: "20m"})
-  refreshTokens.push(refreshToken)
-  console.log("refresh tokens is", refreshTokens)
-
-return refreshTokens }
 
 
 
@@ -217,6 +201,5 @@ module.exports = {
   userGetHandler,
   userPostHandler,
   userPutHandler,
-  userDeleteHandler,
-  
+  userDeleteHandler
 }

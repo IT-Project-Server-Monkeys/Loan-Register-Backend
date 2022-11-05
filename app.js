@@ -23,7 +23,7 @@ app.listen(PORT, function() {
 });
 
 const userRouter = require ("./src/routes/userRouter")
-app.use('/users',userRouter)
+app.use('/users', userRouter)
 
 
 const loanRouter = require("./src/routes/loanRouter")
@@ -31,7 +31,7 @@ app.use('/loans', loanRouter)
 
 
 const itemRouter = require("./src/routes/itemRouter")
-app.use('/items',itemRouter)
+app.use('/items', itemRouter)
 
 const dashboardRouter = require("./src/routes/dashboardRouter")
 app.use('/dashboard', dashboardRouter)
@@ -47,6 +47,7 @@ require('./src/models')
 const jwt = require("jsonwebtoken")
 const bcrypt = require ('bcrypt')
 app.use(express.json())
+
 
 
 app.post("/login", async(req,res) => {
@@ -66,8 +67,16 @@ app.post("/login", async(req,res) => {
     }
 })
 
-
-
+// accessTokens
+function generateAccessToken(user) {
+    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: "15m"}) 
+}
+    // refreshTokens
+let refreshTokens = []
+function generateRefreshToken(user) {
+const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {expiresIn: "20m"})
+refreshTokens.push(refreshToken)
+return refreshToken }
 
 app.get("/", (req, res) => {
     res.send("Authen server testing");
@@ -75,18 +84,18 @@ app.get("/", (req, res) => {
 
 // call this after every 15mins
 app.post("/refreshToken", (req,res) => {
-    if (!req.body.all_refreshTokens.includes(req.body.token)) res.status(400).send("Refresh Token Invalid")
-    req.body.all_refreshTokens = req.body.all_refreshTokens.filter( (c) => c != req.body.token)
+    if (!refreshTokens.includes(req.body.token)) res.status(400).send("Refresh Token Invalid")
+    refreshTokens = refreshTokens.filter( (c) => c != req.body.token)
     //remove the old refreshToken from the refreshTokens list
     const accessToken = generateAccessToken ({user: req.body.login_email})
     const refreshToken = generateRefreshToken ({user: req.body.login_email})
     //generate new accessToken and refreshTokens
-    res.json ({accessToken: accessToken, refreshToken: refreshToken, all_refreshTokens: req.body.all_refreshTokens})
+    res.json ({accessToken: accessToken, refreshToken: refreshToken})
     
     })
 
 app.delete("/logout", (req,res)=>{
-        req.body.all_refreshTokens = req.body.all_refreshTokens.filter( (c) => c != req.body.token)
+        refreshTokens = refreshTokens.filter( (c) => c != req.body.token)
         //remove the old refreshToken from the refreshTokens list
         res.status(204).send("Logged out!")
         })
