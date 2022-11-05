@@ -58,7 +58,7 @@ const  getSpecificUser = async (req,res,next) => {
     const refreshTokens = generateRefreshToken ({user: result.login_email})
     result.accessToken = accessToken
     result.refreshToken = refreshTokens[refreshTokens.length - 1]
-    result.all_refreshToken = refreshTokens
+    result.all_refreshTokens = refreshTokens
    
    
     
