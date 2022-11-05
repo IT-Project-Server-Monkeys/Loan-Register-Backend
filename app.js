@@ -56,9 +56,9 @@ app.post("/login", async(req,res) => {
     console.log(result)
     if (result.length == 0 ) {res.status(404).send("User not found")}
    
-    if (req.body.hashed_password == result[0].hashed_password ) {
-        const accessToken = generateAccessToken ({user: req.body.login_email})
-        const refreshToken = generateRefreshToken ({user: req.body.login_email})
+    if (await bcrypt.compare(req.body.hashed_password,result[0].hashed_password) ) {
+        const accessToken = generateAccessToken ({user: result[0]._id})
+        const refreshToken = generateRefreshToken ({user: result[0]._id})
         res.json ({accessToken: accessToken, refreshToken: refreshToken})
         console.log("Password is correct")
 
