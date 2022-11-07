@@ -88,8 +88,8 @@ app.post("/refreshToken", (req,res) => {
     if (!refreshTokens.includes(req.body.token)) res.status(400).send("Refresh Token Invalid")
     refreshTokens = refreshTokens.filter( (c) => c != req.body.token)
     //remove the old refreshToken from the refreshTokens list
-    const accessToken = generateAccessToken ({user: req.body.login_email})
-    const refreshToken = generateRefreshToken ({user: req.body.login_email})
+    const accessToken = generateAccessToken ({user: req.body.uid})
+    const refreshToken = generateRefreshToken ({user: req.body.uid})
     //generate new accessToken and refreshTokens
     res.json ({accessToken: accessToken, refreshToken: refreshToken})
     
