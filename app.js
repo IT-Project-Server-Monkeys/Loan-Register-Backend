@@ -6,7 +6,7 @@ app.use(express.json({limit: "50mb"}));
 app.use(express.urlencoded({ 
   extended: true,
   limit: "50mb"
-}));
+})); 
 
 var cors = require("cors");
 app.use(cors({origin: '*'}));
@@ -55,16 +55,17 @@ app.post("/login", async(req,res) => {
     const result = await user.find({login_email: req.body.login_email}).lean()
     console.log(result)
     if (result.length == 0 ) {res.status(404).send("User not found")}
+    const final = {}
    
-    if (req.body.hashed_password == result[0].hashed_password ) {
-        const accessToken = generateAccessToken ({user: req.body.login_email})
-        const refreshToken = generateRefreshToken ({user: req.body.login_email})
-        res.json ({accessToken: accessToken, refreshToken: refreshToken})
-        console.log("Password is correct")
+    const accessToken = generateAccessToken ({user: result[0]._id})
+    const refreshToken = generateRefreshToken ({user: result[0]._id})
 
-    }else{
-        res.status(401).send("Password incorrect")
-    }
+    final.accessToken = accessToken
+    final.refreshToken = refreshToken
+    final.hashed_password = result[0].hashed_password
+    res.json(final)
+   
+
 })
 
 // accessTokens
