@@ -14,9 +14,7 @@ app.use(cors({origin: '*'}));
 app.use('/', recordRoutes);
 
 app.get("/", (req, res) => {
-
-    res.send("Server Monkeys Backend Production");
-
+    res.send("Server Monkeys Backend Testing");
 });
 require('./src/models')
 
