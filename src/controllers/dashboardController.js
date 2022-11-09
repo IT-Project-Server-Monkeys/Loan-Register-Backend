@@ -13,7 +13,6 @@ const dashboardGetHandler = async (req,res,next) => {
     const borrowedItems =  await loan.find({loanee_id:userId,status: "On Loan"}).lean()
 
     const total = loanedItems.concat(borrowedItems)
-    console.log(total)
     await fixOverDues(total)
     const ownedItems = await item.find({item_owner: userId}).lean()    
     const allLoanItems = await loan.find({loanee_id:userId}).sort({loan_start_date: -1}).lean()
@@ -96,19 +95,15 @@ function getLoanDetails(loan, newObject) {
 function checkOverdue(loan) {
     const return_date = loan['intended_return_date']
     const todays_date = new Date()
-    console.log(todays_date)
-    const diffTime = (todays_date - return_date);
-    console.log(diffTime)
-    return diffTime > 0;
+    const diffTime = Math.abs(todays_date - return_date);
+    return diffTime < 0;
 }
 
 async function fixOverDues(loans) {
     for (const element of loans) {
         if (checkOverdue(element)) {
-            console.log("Overdue! Fix")
             try {
                 const result = await loan.findOneAndUpdate({_id: element['_id']}, {status: "Overdue"}, {returnDocument:'after'});
-                console.log("Fixed!")
             }
             catch {
                 console.log("Did not update successfully...")
