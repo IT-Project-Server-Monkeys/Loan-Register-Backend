@@ -161,11 +161,140 @@ const loan_macbook = {
   "intended_return_date": "2022-08-25"
 }
 
+<<<<<<< HEAD
+loan_command = { collMod: "loans",
+validator: {
+  $jsonSchema: {
+      bsonType: "object",
+      required: ["loaner_id", "loanee_id", "item_id", "status", "loan_start_date", "intended_return_date"],
+      properties: {
+          loaner_id: {
+              bsonType: "objectId",
+              description: "loaner id."
+          },
+          loanee_id: {
+              bsonType: "objectId",
+              description: "loanee id."
+          },
+          item_id: {
+              bsonType: "objectId",
+              description: "item owner."
+          },
+          status: {
+              bsonType: "string",
+              enum: ["On Loan", "Overdue", "On Time Return", "Late Return", "Early Return"],
+              description: "loan status."
+          },
+          loan_start_date: {
+              bsonType: "date",
+              description: "Loan start date."
+          },
+          intended_return_date: {
+              bsonType: "date",
+              description: "Intended return date."
+          },
+          actual_return_date: {
+            bsonType: "date",
+            description: "Actual return date"
+          },
+          loanee_name: {
+            bsonType: "string",
+            description: "name"
+          },
+          item_image: {
+            bsonType: "string",
+            description: "item_image"
+          }
+
+      }
+  }
+}
+}
+
+
+user_command = { collMod: "users",
+validator: {
+  $jsonSchema: {
+      bsonType: "object",
+      required: ["display_name", "login_email", "hashed_password", "item_categories"],
+      properties: {
+        display_name: {
+              bsonType: "string",
+              description: "display name"
+          },
+          login_email: {
+              bsonType: "string",
+              description: "email"
+          },
+          hashed_password: {
+              bsonType: "string",
+              description: "password"
+          },
+          item_categories: {
+            bsonType: "array",
+            description: "item categories",
+            items: {
+              bsonType: "string",
+           }       
+          }
+      }
+  }
+}
+}
+item_command = { collMod: "items",
+validator: {
+  $jsonSchema: {
+      bsonType: "object",
+      required: ["item_name", "category", "description", "item_owner", "being_loaned", "loan_frequency"],
+      properties: {
+        item_name: {
+              bsonType: "string",
+              description: "name"
+          },
+          category: {
+              bsonType: "string",
+              description: "category"
+          },
+          description: {
+              bsonType: "string",
+              description: "description"
+          },
+          item_owner: {
+              bsonType: "objectId",
+              description: "item_owner"
+          },
+          being_loaned: {
+            bsonType: "bool",
+            description: "being_loaned"
+        },
+        loan_frequency: {
+          bsonType: "int",
+          description: "loan_frequency"
+        },
+        image_url: {
+          bsonType: "string",
+          description: "image_url"
+        },
+        visible: {
+          bsonType: "bool",
+          description: "visible"
+        }
+      }
+  }
+}
+}
+
+
+=======
+>>>>>>> develop
 async function main(){
 
   await client.connect();
   MongoClient.connect(uri, function(err, db) {
       if (err) throw err;
+<<<<<<< HEAD
+      db.db("ProjectDatabaseProduction").command(user_command, function(err, res) {
+=======
       db.db("ProjectDatabaseTesting").command( { collMod: "items",
           validator: {
             $jsonSchema: {
@@ -208,9 +337,16 @@ async function main(){
             }
         }
       }, function(err, res) {
+>>>>>>> develop
       if (err) throw err;
-      console.log("Collection created!"); 
-  })
+      console.log("Collection created!"); })
+      db.db("ProjectDatabaseProduction").command(loan_command, function(err, res) {
+        if (err) throw err;
+        console.log("Collection created!"); })
+      db.db("ProjectDatabaseProduction").command(item_command, function(err, res) {
+        if (err) throw err;
+        console.log("Collection created!"); })
+      return;
   });
 }
 
